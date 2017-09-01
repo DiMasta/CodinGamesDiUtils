@@ -22,6 +22,7 @@ public:
 	Coords operator+(const Coords& other);
 	Coords& operator+=(const Coords& other);
 
+    bool isValid() const;
 	void debug() const;
 private:
 	int xCoord;
@@ -83,6 +84,13 @@ Coords& Coords::operator+=(const Coords& other) {
 	yCoord += other.yCoord;
 
 	return *this;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+bool Coords::isValid() const {
+	return INVALID_COORD != xCoord && INVALID_COORD != yCoord;
 }
 
 //*************************************************************************************************************

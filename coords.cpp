@@ -1,3 +1,6 @@
+const int INVALID_COORD = -1;
+const int DIRECTION_COUNT = 8;
+
 class Coords {
 public:
 	Coords();

@@ -1,10 +1,12 @@
+typedef string NodeId;
+
 class Node {
 public:
 	Node();
-	Node(int id, int nodeDepth);
+	Node(NodeId id, int nodeDepth);
 	~Node();
 
-	int getId() const {
+	NodeId getId() const {
 		return id;
 	}
 
@@ -12,11 +14,11 @@ public:
 		return nodeDepth;
 	}
 
-	void setId(int id) { this->id = id; }
+	void setId(NodeId id) { this->id = id; }
 	void setNodeDepth(int nodeDepth) { this->nodeDepth = nodeDepth; }
 
 private:
-	int id;
+	NodeId id;
 	int nodeDepth;
 };
 
@@ -24,14 +26,14 @@ private:
 //*************************************************************************************************************
 
 Node::Node() :
-	id(INVALID_ID),
+	id(),
 	nodeDepth(INVALID_NODE_DEPTH)
 {}
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-Node::Node(int id, int nodeDepth) :
+Node::Node(NodeId id, int nodeDepth) :
 	id(id),
 	nodeDepth(nodeDepth)
 {}
@@ -45,12 +47,12 @@ Node::~Node() {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-typedef list<int> ChildrenList;
-typedef map<int, ChildrenList> GraphMap;
-typedef map<int, Node*> IdNodeMap;
-typedef vector<int> NodeStack;
-typedef queue<int> NodeQueue;
-typedef set<int> NodeSet;
+typedef list<NodeId> ChildrenList;
+typedef map<NodeId, ChildrenList> GraphMap;
+typedef map<NodeId, Node*> IdNodeMap;
+typedef vector<NodeId> NodeStack;
+typedef queue<NodeId> NodeQueue;
+typedef set<NodeId> NodeSet;
 
 class Graph {
 public:
@@ -70,7 +72,7 @@ public:
 		return idNodeMap;
 	}
 
-	Node* getNode(int nodeId) const {
+	Node* getNode(NodeId nodeId) const {
 		return idNodeMap.at(nodeId);
 	}
 
@@ -78,14 +80,14 @@ public:
 	void setGraph(GraphMap graph) { this->graph = graph; }
 	void setIdNodeMap(IdNodeMap idNodeMap) { this->idNodeMap = idNodeMap; }
 
-	void addEdge(int parentId, int childId);
-	void addNodeInMap(Node* node);
-	void createNode(int nodeId, int nodeDepth);
-	bool nodeCreated(int nodeId) const;
+	void addEdge(NodeId parentId, NodeId childId);
+	void createNode(NodeId nodeId, int nodeDepth);
+	bool nodeCreated(NodeId nodeId) const;
 	void deleteAllNodes();
-	vector<int> treeRootsIds() const;
-	void dfs(int treeRootNodeId);
+	vector<NodeId> treeRootsIds() const;
+	void dfs(NodeId treeRootNodeId);
 	int getMaxNodeDepth() const;
+	bool edgeExists(NodeId parent, NodeId child) const;
 
 private:
 	int nodesCount;
@@ -137,11 +139,11 @@ void Graph::deleteAllNodes() {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-vector<int> Graph::treeRootsIds() const {
-	vector<int> res;
+vector<NodeId> Graph::treeRootsIds() const {
+	vector<NodeId> res;
 
 	for (IdNodeMap::const_iterator nodeIt = idNodeMap.begin(); nodeIt != idNodeMap.end(); ++nodeIt) {
-		int nodeId = nodeIt->first;
+		NodeId nodeId = nodeIt->first;
 
 		bool isChildOfANode = false;
 
@@ -164,7 +166,7 @@ vector<int> Graph::treeRootsIds() const {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-void Graph::dfs(int treeRootNodeId) {
+void Graph::dfs(NodeId treeRootNodeId) {
 	getNode(treeRootNodeId)->setNodeDepth(TREE_ROOT_NODE_DEPTH);
 
 	NodeStack frontier;
@@ -173,13 +175,13 @@ void Graph::dfs(int treeRootNodeId) {
 	frontier.push_back(treeRootNodeId);
 
 	while (!frontier.empty()) {
-		int state = frontier.back();
+		NodeId state = frontier.back();
 		frontier.pop_back();
 
 		explored.insert(state);
 
 		for (ChildrenList::iterator nodeIt = graph[state].begin(); nodeIt != graph[state].end(); ++nodeIt) {
-			int childId = *nodeIt;
+			NodeId childId = *nodeIt;
 
 			bool nodeExplored = explored.find(childId) != explored.end();
 			bool nodeInFrontier = find(frontier.begin(), frontier.end(), childId) != frontier.end();
@@ -212,30 +214,40 @@ int Graph::getMaxNodeDepth() const {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-void Graph::addEdge(int parentId, int childId) {
+bool Graph::edgeExists(NodeId parent, NodeId child) const {
+	bool res = false;
+
+	if (nodeCreated(parent) && nodeCreated(child)) {
+		ChildrenList children = graph.at(parent); // TODO: copying do not copy use * for children
+		res = find(children.begin(), children.end(), child) != children.end();
+	}
+
+	return res;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+void Graph::addEdge(NodeId parentId, NodeId childId) {
+	createNode(parentId, INVALID_NODE_DEPTH);
+	createNode(childId, INVALID_NODE_DEPTH);
 	graph[parentId].push_back(childId);
 }
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-void Graph::addNodeInMap(Node* node) {
-	idNodeMap[node->getId()] = node;
-}
-
-//*************************************************************************************************************
-//*************************************************************************************************************
-
-void Graph::createNode(int nodeId, int nodeDepth) {
+void Graph::createNode(NodeId nodeId, int nodeDepth) {
 	if (!nodeCreated(nodeId)) {
 		Node* node = new Node(nodeId, nodeDepth);
 		idNodeMap[node->getId()] = node;
+		++nodesCount;
 	}
 }
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-bool Graph::nodeCreated(int nodeId) const {
+bool Graph::nodeCreated(NodeId nodeId) const {
 	return idNodeMap.end() != idNodeMap.find(nodeId);
 }

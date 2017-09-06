@@ -1,7 +1,3 @@
-const int INVALID_ID = -1;
-const int INVALID_NODE_DEPTH = -1;
-const int TREE_ROOT_NODE_DEPTH = 1;
-
 class Node {
 public:
 	Node();
@@ -53,6 +49,7 @@ typedef list<int> ChildrenList;
 typedef map<int, ChildrenList> GraphMap;
 typedef map<int, Node*> IdNodeMap;
 typedef vector<int> NodeStack;
+typedef queue<int> NodeQueue;
 typedef set<int> NodeSet;
 
 class Graph {
@@ -86,7 +83,7 @@ public:
 	void createNode(int nodeId, int nodeDepth);
 	bool nodeCreated(int nodeId) const;
 	void deleteAllNodes();
-	int treeRootId() const;
+	vector<int> treeRootsIds() const;
 	void dfs(int treeRootNodeId);
 	int getMaxNodeDepth() const;
 
@@ -140,8 +137,8 @@ void Graph::deleteAllNodes() {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-int Graph::treeRootId() const {
-	int res = INVALID_ID;
+vector<int> Graph::treeRootsIds() const {
+	vector<int> res;
 
 	for (IdNodeMap::const_iterator nodeIt = idNodeMap.begin(); nodeIt != idNodeMap.end(); ++nodeIt) {
 		int nodeId = nodeIt->first;
@@ -157,8 +154,7 @@ int Graph::treeRootId() const {
 		}
 
 		if (!isChildOfANode) {
-			res = nodeId;
-			break;
+			res.push_back(nodeId);
 		}
 	}
 

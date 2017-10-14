@@ -1,4 +1,4 @@
-typedef string NodeId;
+typedef int NodeId;
 
 class Node {
 public:
@@ -80,6 +80,7 @@ public:
 	void setGraph(GraphMap graph) { this->graph = graph; }
 	void setIdNodeMap(IdNodeMap idNodeMap) { this->idNodeMap = idNodeMap; }
 
+	void createEdge(NodeId x, NodeId y);
 	void addEdge(NodeId parentId, NodeId childId);
 	void createNode(NodeId nodeId, int nodeDepth);
 	bool nodeCreated(NodeId nodeId) const;
@@ -251,3 +252,16 @@ void Graph::createNode(NodeId nodeId, int nodeDepth) {
 bool Graph::nodeCreated(NodeId nodeId) const {
 	return idNodeMap.end() != idNodeMap.find(nodeId);
 }
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+void Graph::createEdge(NodeId x, NodeId y) {
+	createNode(x, INVALID_NODE_DEPTH);
+	createNode(y, INVALID_NODE_DEPTH);
+
+	addEdge(x, y);
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************

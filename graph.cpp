@@ -51,7 +51,7 @@ typedef list<NodeId> ChildrenList;
 typedef map<NodeId, ChildrenList> GraphMap;
 typedef map<NodeId, Node*> IdNodeMap;
 typedef vector<NodeId> NodeStack;
-typedef queue<NodeId> NodeQueue;
+typedef deque<NodeId> NodeQueue;
 typedef set<NodeId> NodeSet;
 
 class Graph {
@@ -87,6 +87,7 @@ public:
 	void deleteAllNodes();
 	vector<NodeId> treeRootsIds() const;
 	void dfs(NodeId treeRootNodeId);
+	void bfs(NodeId treeRootNodeId);
 	int getMaxNodeDepth() const;
 	bool edgeExists(NodeId parent, NodeId child) const;
 
@@ -178,6 +179,38 @@ void Graph::dfs(NodeId treeRootNodeId) {
 	while (!frontier.empty()) {
 		NodeId state = frontier.back();
 		frontier.pop_back();
+
+		explored.insert(state);
+
+		for (ChildrenList::iterator nodeIt = graph[state].begin(); nodeIt != graph[state].end(); ++nodeIt) {
+			NodeId childId = *nodeIt;
+
+			bool nodeExplored = explored.find(childId) != explored.end();
+			bool nodeInFrontier = find(frontier.begin(), frontier.end(), childId) != frontier.end();
+			if (!nodeExplored && !nodeInFrontier) {
+				frontier.push_back(childId);
+
+				int parentDepth = idNodeMap[state]->getNodeDepth();
+				idNodeMap[childId]->setNodeDepth(parentDepth + 1);
+			}
+		}
+	}
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+void Graph::bfs(NodeId treeRootNodeId) {
+	getNode(treeRootNodeId)->setNodeDepth(TREE_ROOT_NODE_DEPTH);
+
+	NodeQueue frontier;
+	NodeSet explored;
+
+	frontier.push_back(treeRootNodeId);
+
+	while (!frontier.empty()) {
+		NodeId state = frontier.front();
+		frontier.pop_front();
 
 		explored.insert(state);
 

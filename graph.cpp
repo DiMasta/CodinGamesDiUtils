@@ -263,8 +263,6 @@ bool Graph::edgeExists(NodeId parent, NodeId child) const {
 //*************************************************************************************************************
 
 void Graph::addEdge(NodeId parentId, NodeId childId) {
-	createNode(parentId, INVALID_NODE_DEPTH);
-	createNode(childId, INVALID_NODE_DEPTH);
 	graph[parentId].push_back(childId);
 }
 

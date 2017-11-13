@@ -3,32 +3,35 @@
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
+typedef float Coord;
+const Coord INVALID_COORD = -1.f;
+
 class Coords {
 public:
 	Coords();
-	Coords(int xCoord, int yCoord);
+	Coords(Coord xCoord, Coord yCoord);
 
-	int getXCoord() const {
+	Coord getXCoord() const {
 		return xCoord;
 	}
 
-	int getYCoord() const {
+	Coord getYCoord() const {
 		return yCoord;
 	}
 
-	void setXCoord(int xCoord) { this->xCoord = xCoord; }
-	void setYCoord(int yCoord) { this->yCoord = yCoord; }
+	void setXCoord(Coord xCoord) { this->xCoord = xCoord; }
+	void setYCoord(Coord yCoord) { this->yCoord = yCoord; }
 
 	Coords& operator=(const Coords& other);
 	bool operator==(const Coords& other);
 	Coords operator+(const Coords& other);
 	Coords& operator+=(const Coords& other);
 
-    bool isValid() const;
+	bool isValid() const;
 	void debug() const;
 private:
-	int xCoord;
-	int yCoord;
+	Coord xCoord;
+	Coord yCoord;
 };
 
 //*************************************************************************************************************
@@ -44,8 +47,8 @@ Coords::Coords() :
 //*************************************************************************************************************
 
 Coords::Coords(
-	int xCoord,
-	int yCoord
+	Coord xCoord,
+	Coord yCoord
 ) :
 	xCoord(xCoord),
 	yCoord(yCoord)
@@ -121,11 +124,11 @@ enum Direction {
 //*************************************************************************************************************
 
 Coords DIRECTIONS[DIRECTIONS_COUNT] = {
-	Coords( 0, -1), // N
-	Coords( 1, -1), // NE
-	Coords( 1,  0), // E
-	Coords( 1,  1), // SE
-	Coords( 0,  1), // S
+	Coords(0, -1), // N
+	Coords(1, -1), // NE
+	Coords(1,  0), // E
+	Coords(1,  1), // SE
+	Coords(0,  1), // S
 	Coords(-1,  1), // SW
 	Coords(-1,  0), // W
 	Coords(-1, -1)  // NW

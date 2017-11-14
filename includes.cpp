@@ -9,5 +9,6 @@
 #include <algorithm>
 #include <ctime>
 #include <deque>
+#include <math.h>
 
 using namespace std;

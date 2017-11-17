@@ -3,8 +3,8 @@
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 
-typedef float Coord;
-const Coord INVALID_COORD = -1.f;
+typedef int Coord;
+const Coord INVALID_COORD = -1;
 
 class Coords {
 public:
@@ -29,6 +29,10 @@ public:
 
 	bool isValid() const;
 	void debug() const;
+    void print() const;
+    
+    int distance(const Coords& coords) const;
+
 private:
 	Coord xCoord;
 	Coord yCoord;
@@ -103,6 +107,24 @@ bool Coords::isValid() const {
 
 void Coords::debug() const {
 	cerr << "Position: X=" << xCoord << ", Y=" << yCoord << endl;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+void Coords::print() const {
+	cout << xCoord << " " << yCoord;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+int Coords::distance(const Coords& coords) const {
+	int kat0 = coords.xCoord - xCoord;
+	int kat1 = coords.yCoord - yCoord;
+
+	int hip = (int)sqrt((kat0 * kat0) + (kat1 * kat1));
+	return hip;
 }
 
 //*************************************************************************************************************

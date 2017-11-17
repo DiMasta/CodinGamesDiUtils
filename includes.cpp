@@ -10,5 +10,6 @@
 #include <ctime>
 #include <deque>
 #include <math.h>
+#include <climits>
 
 using namespace std;

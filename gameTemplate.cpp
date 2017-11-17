@@ -27,7 +27,10 @@ private:
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-Game::Game() : turnsCount(0) {
+Game::Game() :
+    turnsCount(0) 
+{
+    
 }
 
 //*************************************************************************************************************
@@ -120,6 +123,13 @@ int main(int argc, char** argv) {
 	doctest::Context context;
 	int res = context.run();
 #else
+    
+#ifdef REDIRECT_CIN_FROM_FILE
+	ifstream in(INPUT_FILE_NAME);
+	streambuf *cinbuf = cin.rdbuf();
+	cin.rdbuf(in.rdbuf());
+#endif
+
 	Game game;
 	game.play();
 #endif // TESTS

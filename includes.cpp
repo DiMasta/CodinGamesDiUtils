@@ -11,5 +11,6 @@
 #include <deque>
 #include <math.h>
 #include <climits>
+#include <cstring>
 
 using namespace std;

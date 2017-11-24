@@ -26,12 +26,19 @@ public:
 	bool operator==(const Coords& other);
 	Coords operator+(const Coords& other);
 	Coords& operator+=(const Coords& other);
+    Coords operator-(const Coords& other);
+	Coords& operator-=(const Coords& other);
+    Coords operator*(const Coords& other);
+	Coords& operator*=(const Coords& other);
+    Coords operator*(Coord numerical);
+	Coords& operator*=(Coord numerical);
 
 	bool isValid() const;
 	void debug() const;
     void print() const;
     
-    int distance(const Coords& coords) const;
+    Coord distance(const Coords& coords) const;
+    void roundCoords();
 
 private:
 	Coord xCoord;
@@ -98,6 +105,40 @@ Coords& Coords::operator+=(const Coords& other) {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
+Coords Coords::operator-(const Coords& other) {
+	return Coords(xCoord - other.xCoord, yCoord - other.yCoord);
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Coords& Coords::operator-=(const Coords& other) {
+	xCoord -= other.xCoord;
+	yCoord -= other.yCoord;
+
+	return *this;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Coords Coords::operator*(const Coords& other) {
+	return Coords(xCoord * other.xCoord, yCoord * other.yCoord);
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Coords& Coords::operator*=(const Coords& other) {
+	xCoord *= other.xCoord;
+	yCoord *= other.yCoord;
+
+	return *this;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
 bool Coords::isValid() const {
 	return INVALID_COORD != xCoord && INVALID_COORD != yCoord;
 }
@@ -119,16 +160,20 @@ void Coords::print() const {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-int Coords::distance(const Coords& coords) const {
-	int kat0 = coords.xCoord - xCoord;
-	int kat1 = coords.yCoord - yCoord;
+Coord Coords::distance(const Coords& coords) const {
+	Coord kat0 = coords.xCoord - xCoord;
+	Coord kat1 = coords.yCoord - yCoord;
 
-	int hip = (int)sqrt((kat0 * kat0) + (kat1 * kat1));
+	Coord hip = (Coord)sqrt((kat0 * kat0) + (kat1 * kat1));
 	return hip;
 }
 
 //*************************************************************************************************************
-//*************************************************************************************************************
+
+void Coords::roundCoords() {
+	xCoord = round(xCoord);
+	yCoord = round(yCoord);
+}
 
 enum Direction {
 	DIR_INVALID = -1,

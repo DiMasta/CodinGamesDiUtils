@@ -12,5 +12,7 @@
 #include <math.h>
 #include <climits>
 #include <cstring>
+#include <fstream>
+
 
 using namespace std;

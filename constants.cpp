@@ -9,3 +9,4 @@ const int INVALID_NODE_DEPTH = -1;
 const int TREE_ROOT_NODE_DEPTH = 1;
 const int ZERO_CHAR = '0';
 const int DIRECTIONS_COUNT = 8;
+const int BYTE_SIZE = 8;

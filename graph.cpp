@@ -118,9 +118,9 @@ public:
 	void setGraph(GraphMap graph) { this->graph = graph; }
 	void setIdNodeMap(IdNodeMap idNodeMap) { this->idNodeMap = idNodeMap; }
 
-	void createEdge(NodeId x, NodeId y);
 	void addEdge(NodeId parentId, NodeId childId);
-	void createNode(NodeId nodeId, int nodeDepth);
+	void createNode(NodeId nodeId, int nodeDepth, NodeId parentId);
+    void clear();
 	bool nodeCreated(NodeId nodeId) const;
 	void deleteAllNodes();
 	vector<NodeId> treeRootsIds() const;
@@ -183,6 +183,9 @@ void Graph::deleteAllNodes() {
 			node = NULL;
 		}
 	}
+    
+    idNodeMap.clear();
+    nodesCount = 0;
 }
 
 //*************************************************************************************************************
@@ -402,10 +405,11 @@ void Graph::addEdge(NodeId parentId, NodeId childId) {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-void Graph::createNode(NodeId nodeId, int nodeDepth) {
+void Graph::createNode(NodeId nodeId, int nodeDepth, NodeId parentId) {
 	if (!nodeCreated(nodeId)) {
-		Node* node = new Node(nodeId, nodeDepth, INVALID_ID, false, false, false);
-		idNodeMap[node->getId()] = node;
+		Node* node = new Node(nodeId, nodeDepth, parentIds, false, false, false);
+        idNodeMap[nodeId] = node;
+		graph[nodeId];
 		++nodesCount;
 	}
 }
@@ -413,18 +417,16 @@ void Graph::createNode(NodeId nodeId, int nodeDepth) {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-bool Graph::nodeCreated(NodeId nodeId) const {
-	return idNodeMap.end() != idNodeMap.find(nodeId);
+void Graph::clear() {
+	deleteAllNodes();
+	graph.clear();
 }
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-void Graph::createEdge(NodeId x, NodeId y) {
-	createNode(x, INVALID_NODE_DEPTH);
-	createNode(y, INVALID_NODE_DEPTH);
-
-	addEdge(x, y);
+bool Graph::nodeCreated(NodeId nodeId) const {
+	return idNodeMap.end() != idNodeMap.find(nodeId);
 }
 
 //*************************************************************************************************************

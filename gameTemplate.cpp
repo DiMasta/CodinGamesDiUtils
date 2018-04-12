@@ -128,7 +128,13 @@ int main(int argc, char** argv) {
 	ifstream in(INPUT_FILE_NAME);
 	streambuf *cinbuf = cin.rdbuf();
 	cin.rdbuf(in.rdbuf());
-#endif
+#endif // REDIRECT_CIN_FROM_FILE
+
+#ifdef REDIRECT_COUT_TO_FILE
+	ofstream out(OUTPUT_FILE_NAME);
+	streambuf *coutbuf = cout.rdbuf();
+	cout.rdbuf(out.rdbuf());
+#endif // REDIRECT_COUT_TO_FILE
 
 	Game game;
 	game.play();

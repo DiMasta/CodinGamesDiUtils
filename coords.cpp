@@ -40,6 +40,7 @@ public:
     Coord distance(const Coords& coords) const;
     void roundCoords();
 
+	friend Coord distance(const Coords& point0, const Coords& point1);
 private:
 	Coord xCoord;
 	Coord yCoord;
@@ -174,6 +175,21 @@ void Coords::roundCoords() {
 	xCoord = round(xCoord);
 	yCoord = round(yCoord);
 }
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Coord distance(const Coords& point0, const Coords& point1) {
+	Coord lineXLenght = static_cast<Coord>(abs(point0.xCoord - point1.xCoord));
+	Coord lineYLenght = static_cast<Coord>(abs(point0.yCoord - point1.yCoord));
+
+	Coord distance = static_cast<Coord>(sqrt((lineXLenght * lineXLenght) + (lineYLenght * lineYLenght)));
+
+	return distance;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
 
 enum Direction {
 	DIR_INVALID = -1,

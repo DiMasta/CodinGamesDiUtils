@@ -67,6 +67,10 @@ void Game::gameLoop() {
 		getTurnInput();	
 		makeTurn();
 		turnEnd();
+		
+#ifdef DEBUG_ONE_TURN
+		break;
+#endif // DEBUG_ONE_TURN
 	}
 }
 

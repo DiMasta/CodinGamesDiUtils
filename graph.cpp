@@ -4,7 +4,7 @@
 //-------------------------------------------------------------------------------------------------------------
 
 typedef int NodeId;
-const NodeId INVALID_ID = -1;
+const NodeId INVALID_NODE_ID = -1;
 
 class Node {
 public:
@@ -56,9 +56,9 @@ private:
 //*************************************************************************************************************
 
 Node::Node() :
-	id(INVALID_ID),
+	id(INVALID_NODE_ID),
 	nodeDepth(INVALID_NODE_DEPTH),
-	parentId(INVALID_ID),
+	parentId(INVALID_NODE_ID),
 	rootNote(false),
 	explored(false),
 	inFrontier(false)
@@ -414,7 +414,7 @@ void Graph::addEdge(NodeId parentId, NodeId childId) {
 
 void Graph::createNode(NodeId nodeId, int nodeDepth, NodeId parentId) {
 	if (!nodeCreated(nodeId)) {
-		Node* node = new Node(nodeId, nodeDepth, parentIds, false, false, false);
+		Node* node = new Node(nodeId, nodeDepth, parentId, false, false, false);
         idNodeMap[nodeId] = node;
 		graph[nodeId];
 		++nodesCount;

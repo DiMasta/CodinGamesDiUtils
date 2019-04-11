@@ -1,9 +1,11 @@
 //#define OUTPUT_GAME_DATA
 //#define REDIRECT_CIN_FROM_FILE
 //#define REDIRECT_COUT_TO_FILE
+//#define DEBUG_ONE_TURN
 
-const string INPUT_FILE_NAME = "input.txt";
-const string OUTPUT_FILE_NAME = "output.txt";
+static const string INPUT_FILE_NAME = "input.txt";
+static const string OUTPUT_FILE_NAME = "output.txt";
+static const string EMPTY_STRING = "";
 
 static const int INVALID_ID = -1;
 static const int INVALID_NODE_DEPTH = -1;

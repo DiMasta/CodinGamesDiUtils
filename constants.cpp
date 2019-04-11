@@ -5,9 +5,10 @@
 const string INPUT_FILE_NAME = "input.txt";
 const string OUTPUT_FILE_NAME = "output.txt";
 
-const int INVALID_ID = -1;
-const int INVALID_NODE_DEPTH = -1;
-const int TREE_ROOT_NODE_DEPTH = 1;
-const int ZERO_CHAR = '0';
-const int DIRECTIONS_COUNT = 8;
-const int BYTE_SIZE = 8;
+static const int INVALID_ID = -1;
+static const int INVALID_NODE_DEPTH = -1;
+static const int TREE_ROOT_NODE_DEPTH = 1;
+static const int ZERO_CHAR = '0';
+static const int DIRECTIONS_COUNT = 8;
+static const int BYTE_SIZE = 8;
+static const int PAIR = 2;

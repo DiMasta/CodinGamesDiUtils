@@ -4,6 +4,7 @@ const NodeId INVALID_ID = -1;
 class Node {
 public:
 	Node();
+	Node(NodeId);
 	Node(NodeId id, int nodeDepth, NodeId parentId, bool rootNote, bool explored, bool inFrontier);
 	~Node();
 
@@ -45,6 +46,8 @@ private:
 	bool rootNote;
 	bool explored;
 	bool inFrontier;
+	
+	// Game specific members
 };
 
 //*************************************************************************************************************
@@ -59,6 +62,21 @@ Node::Node() :
 	inFrontier(false)
 {
 	
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Node::Node(NodeId id) :
+	id(id),
+	nodeDepth(INVALID_NODE_DEPTH),
+	parentId(INVALID_ID),
+	rootNote(false),
+	explored(false),
+	inFrontier(false),
+	isGateway(false)
+{
+
 }
 
 //*************************************************************************************************************
@@ -95,11 +113,15 @@ typedef set<NodeId> NodeSet;
 class Graph {
 public:
 	Graph();
-	Graph(int nodesCount, GraphMap graph);
+	Graph(int nodesCount, bool undirected, GraphMap graph);
 	~Graph();
 
 	int getNodesCount() const {
 		return nodesCount;
+	}
+
+	bool getUndirectedget() const {
+		return undirected;
 	}
 
 	GraphMap getGraph() const {
@@ -115,12 +137,19 @@ public:
 	}
 
 	void setNodesCount(int nodesCount) { this->nodesCount = nodesCount; }
+	void setUndirected(bool undirected) { this->undirected = undirected; }
 	void setGraph(GraphMap graph) { this->graph = graph; }
 	void setIdNodeMap(IdNodeMap idNodeMap) { this->idNodeMap = idNodeMap; }
 
 	void addEdge(NodeId parentId, NodeId childId);
+
+	/// Adds edge wiht alredy created nodes
+	void addEdge(Node* parent, Node* child);
+
+	/// Used when new child should be added to the graph
 	void createNode(NodeId nodeId, int nodeDepth, NodeId parentId);
-    void clear();
+
+	void clear();
 	bool nodeCreated(NodeId nodeId) const;
 	void deleteAllNodes();
 	vector<NodeId> treeRootsIds() const;
@@ -136,11 +165,14 @@ public:
 
 private:
 	int nodesCount;
+	bool undirected;
 	GraphMap graph;
 
 	// Map used to store all nodes, used to check if node is already created
 	// and for easy accesss when deleteing memory pointed by each node
 	IdNodeMap idNodeMap;
+
+	/// Game specific members
 };
 
 //*************************************************************************************************************
@@ -148,19 +180,21 @@ private:
 
 Graph::Graph() :
 	nodesCount(0),
+	undirected(true),
 	graph()
 {
-	
+
 }
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
-Graph::Graph(int nodesCount, GraphMap graph) :
+Graph::Graph(int nodesCount, bool undirected, GraphMap graph) :
 	nodesCount(nodesCount),
+	undirected(undirected),
 	graph(graph)
 {
-	
+
 }
 
 //*************************************************************************************************************
@@ -183,9 +217,9 @@ void Graph::deleteAllNodes() {
 			node = NULL;
 		}
 	}
-    
-    idNodeMap.clear();
-    nodesCount = 0;
+
+	idNodeMap.clear();
+	nodesCount = 0;
 }
 
 //*************************************************************************************************************
@@ -229,7 +263,7 @@ void Graph::dfs(NodeId treeRootNodeId) {
 	while (!frontier.empty()) {
 		NodeId state = frontier.back();
 		frontier.pop_back();
-		idNodeMap[treeRootNodeId]->setInFrontier(false);
+		idNodeMap[state]->setInFrontier(false);
 
 		idNodeMap[state]->setExplored(true);
 
@@ -264,7 +298,7 @@ void Graph::bfs(NodeId treeRootNodeId) {
 	while (!frontier.empty()) {
 		NodeId state = frontier.front();
 		frontier.pop_front();
-		idNodeMap[treeRootNodeId]->setInFrontier(false);
+		idNodeMap[state]->setInFrontier(false);
 
 		idNodeMap[state]->setExplored(true);
 
@@ -381,7 +415,7 @@ int Graph::treeDiameter(NodeId nodeId) const {
 	for (ChildrenList::const_iterator nodeIt = graph.at(nodeId).begin(); nodeIt != graph.at(nodeId).end(); ++nodeIt) {
 		maxChildDia = max(maxChildDia, treeDiameter(*nodeIt));
 	}
-	
+
 	return max(maxChildDia, max1 + max2 + 1);
 }
 
@@ -400,6 +434,31 @@ void Graph::graphResetAlgParams() {
 
 void Graph::addEdge(NodeId parentId, NodeId childId) {
 	graph[parentId].push_back(childId);
+
+	if (undirected) {
+		graph[childId].push_back(parentId);
+	}
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+void Graph::addEdge(Node* parent, Node* child) {
+	Node* nodes[PAIR] = { parent, child };
+
+	for (int nodeIdx = 0; nodeIdx < PAIR; ++nodeIdx) {
+		Node* node = nodes[nodeIdx];
+		NodeId nodeId = node->getId();
+
+		// May be an addNode(Node*) would be nice
+		if (!nodeCreated(nodeId)) {
+			idNodeMap[nodeId] = node;
+			graph[nodeId];
+		}
+	}
+
+	addEdge(parent->getId(), child->getId());
+	child->setParentId(parent->getId());
 }
 
 //*************************************************************************************************************
@@ -407,8 +466,8 @@ void Graph::addEdge(NodeId parentId, NodeId childId) {
 
 void Graph::createNode(NodeId nodeId, int nodeDepth, NodeId parentId) {
 	if (!nodeCreated(nodeId)) {
-		Node* node = new Node(nodeId, nodeDepth, parentIds, false, false, false);
-        idNodeMap[nodeId] = node;
+		Node* node = new Node(nodeId, nodeDepth, parentId, false, false, false);
+		idNodeMap[nodeId] = node;
 		graph[nodeId];
 		++nodesCount;
 	}

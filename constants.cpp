@@ -2,6 +2,8 @@
 //#define REDIRECT_CIN_FROM_FILE
 //#define REDIRECT_COUT_TO_FILE
 //#define DEBUG_ONE_TURN
+//#define OUTPUT_GAME_DATA
+//#define DEBUG_ONE_TURN
 
 static const string INPUT_FILE_NAME = "input.txt";
 static const string OUTPUT_FILE_NAME = "output.txt";

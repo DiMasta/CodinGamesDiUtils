@@ -8,6 +8,7 @@
 static const string INPUT_FILE_NAME = "input.txt";
 static const string OUTPUT_FILE_NAME = "output.txt";
 static const string EMPTY_STRING = "";
+static const string SPACE = " ";
 
 static const int INVALID_ID = -1;
 static const int INVALID_NODE_DEPTH = -1;

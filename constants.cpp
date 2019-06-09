@@ -10,10 +10,10 @@ static const string OUTPUT_FILE_NAME = "output.txt";
 static const string EMPTY_STRING = "";
 static const string SPACE = " ";
 
-static const int INVALID_ID = -1;
-static const int INVALID_NODE_DEPTH = -1;
-static const int TREE_ROOT_NODE_DEPTH = 1;
-static const int ZERO_CHAR = '0';
-static const int DIRECTIONS_COUNT = 8;
-static const int BYTE_SIZE = 8;
-static const int PAIR = 2;
+static constexpr int INVALID_ID = -1;
+static constexpr int INVALID_NODE_DEPTH = -1;
+static constexpr int TREE_ROOT_NODE_DEPTH = 1;
+static constexpr int ZERO_CHAR = '0';
+static constexpr int DIRECTIONS_COUNT = 8;
+static constexpr int BYTE_SIZE = 8;
+static constexpr int PAIR = 2;

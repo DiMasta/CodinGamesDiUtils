@@ -1,7 +1,5 @@
-//#define OUTPUT_GAME_DATA
 //#define REDIRECT_CIN_FROM_FILE
 //#define REDIRECT_COUT_TO_FILE
-//#define DEBUG_ONE_TURN
 //#define OUTPUT_GAME_DATA
 //#define DEBUG_ONE_TURN
 

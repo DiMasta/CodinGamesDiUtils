@@ -21,10 +21,10 @@ public:
 
 	void debug() const;
 
-private:
-	int turnsCount;
-	
+private:	
 	// Game specific members
+	
+	int turnsCount;
 };
 
 //*************************************************************************************************************

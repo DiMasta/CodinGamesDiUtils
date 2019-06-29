@@ -2,6 +2,7 @@
 //#define REDIRECT_COUT_TO_FILE
 //#define OUTPUT_GAME_DATA
 //#define DEBUG_ONE_TURN
+//#define USE_UNIFORM_RANDOM
 
 static const string INPUT_FILE_NAME = "input.txt";
 static const string OUTPUT_FILE_NAME = "output.txt";
@@ -15,3 +16,5 @@ static constexpr int ZERO_CHAR = '0';
 static constexpr int DIRECTIONS_COUNT = 8;
 static constexpr int BYTE_SIZE = 8;
 static constexpr int PAIR = 2;
+
+const float FLOAT_MAX_RAND = static_cast<float>(RAND_MAX);

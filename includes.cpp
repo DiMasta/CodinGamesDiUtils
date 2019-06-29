@@ -14,5 +14,6 @@
 #include <cstring>
 #include <fstream>
 #include <iterator>
+#include <bitset>
 
 using namespace std;

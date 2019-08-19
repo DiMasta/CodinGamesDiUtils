@@ -65,8 +65,8 @@ void Game::gameEnd() {
 
 void Game::gameLoop() {
 	while (true) {
-        turnBegin();
-		getTurnInput();	
+        getTurnInput();	
+		turnBegin();
 		makeTurn();
 		turnEnd();
 		

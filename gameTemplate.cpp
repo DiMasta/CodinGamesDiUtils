@@ -25,13 +25,15 @@ private:
 	// Game specific members
 	
 	int turnsCount;
+	int stopGame;
 };
 
 //*************************************************************************************************************
 //*************************************************************************************************************
 
 Game::Game() :
-    turnsCount{ 0 }
+    turnsCount{ 0 },
+	stopGame{ false }
 {
     
 }
@@ -64,7 +66,7 @@ void Game::gameEnd() {
 //*************************************************************************************************************
 
 void Game::gameLoop() {
-	while (true) {
+	while (!stopGame) {
         getTurnInput();	
 		turnBegin();
 		makeTurn();
@@ -138,17 +140,15 @@ int main(int argc, char** argv) {
 	int res = context.run();
 #else
     
-#ifdef REDIRECT_CIN_FROM_FILE
+#ifdef REDIRECT_INPUT
 	ifstream in(INPUT_FILE_NAME);
 	streambuf *cinbuf = cin.rdbuf();
 	cin.rdbuf(in.rdbuf());
-#endif // REDIRECT_CIN_FROM_FILE
-
-#ifdef REDIRECT_COUT_TO_FILE
+	
 	ofstream out(OUTPUT_FILE_NAME);
 	streambuf *coutbuf = cout.rdbuf();
 	cout.rdbuf(out.rdbuf());
-#endif // REDIRECT_COUT_TO_FILE
+#endif // REDIRECT_INPUT
 
 	Game game;
 	game.play();

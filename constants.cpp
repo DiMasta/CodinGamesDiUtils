@@ -9,6 +9,7 @@ static const string EMPTY_STRING = "";
 static const string SPACE = " ";
 
 static constexpr int INVALID_ID = -1;
+static constexpr int INVALID_IDX = -1;
 static constexpr int INVALID_NODE_DEPTH = -1;
 static constexpr int TREE_ROOT_NODE_DEPTH = 1;
 static constexpr int ZERO_CHAR = '0';

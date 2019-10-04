@@ -15,5 +15,6 @@
 #include <fstream>
 #include <iterator>
 #include <bitset>
+#include <cmath>
 
 using namespace std;

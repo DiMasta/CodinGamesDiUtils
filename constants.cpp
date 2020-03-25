@@ -16,5 +16,8 @@ static constexpr int ZERO_CHAR = '0';
 static constexpr int DIRECTIONS_COUNT = 8;
 static constexpr int BYTE_SIZE = 8;
 static constexpr int PAIR = 2;
+static constexpr int BASE_2 = 2;
+static constexpr int BASE_10 = 10;
+static constexpr int BASE_16 = 16;
 
 const float FLOAT_MAX_RAND = static_cast<float>(RAND_MAX);

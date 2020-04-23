@@ -150,8 +150,18 @@ int main(int argc, char** argv) {
 	cout.rdbuf(out.rdbuf());
 #endif // REDIRECT_INPUT
 
+#ifdef TIME_MEASURERMENT
+	chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+#endif // TIME_MEASURERM
+
 	Game game;
 	game.play();
+
+#ifdef TIME_MEASURERMENT
+	chrono::steady_clock::time_point end = chrono::steady_clock::now();
+	cerr << "Execution time: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
+#endif // TIME_MEASURERMENT	
+	
 #endif // TESTS
 
 	return 0;

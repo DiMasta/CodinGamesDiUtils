@@ -67,10 +67,19 @@ void Game::gameEnd() {
 
 void Game::gameLoop() {
 	while (!stopGame) {
-        getTurnInput();	
+#ifdef TIME_MEASURERMENT
+		chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+#endif // TIME_MEASURERM
+
+		getTurnInput();
 		turnBegin();
 		makeTurn();
 		turnEnd();
+
+#ifdef TIME_MEASURERMENT
+		chrono::steady_clock::time_point end = chrono::steady_clock::now();
+		cerr << "Turn[" << turnsCount - 1 << "] execution time: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
+#endif // TIME_MEASURERM
 		
 #ifdef DEBUG_ONE_TURN
 		break;
@@ -160,7 +169,7 @@ int main(int argc, char** argv) {
 
 #ifdef TIME_MEASURERMENT
 	chrono::steady_clock::time_point end = chrono::steady_clock::now();
-	cerr << "Execution time: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
+	cerr << "Game execution time: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
 #endif // TIME_MEASURERMENT	
 	
 #endif // TESTS

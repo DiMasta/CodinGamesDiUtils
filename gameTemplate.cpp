@@ -141,6 +141,7 @@ int main(int argc, char** argv) {
 #else
     
 #ifdef REDIRECT_INPUT
+	cerr << endl << endl << endl << "!!! REDIRECT_INPUT !!!" << endl << endl << endl;
 	ifstream in(INPUT_FILE_NAME);
 	streambuf *cinbuf = cin.rdbuf();
 	cin.rdbuf(in.rdbuf());

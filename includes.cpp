@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <ctime>
 #include <deque>
-#include <math.h>
+#include <cmath>
 #include <climits>
 #include <cstring>
 #include <fstream>

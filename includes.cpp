@@ -18,5 +18,6 @@
 #include <cmath>
 #include <iomanip>
 #include <chrono>
+#include <cassert>
 
 using namespace std;

@@ -11,3 +11,6 @@ def isPrime(n):
             return 0
         i=i+6  
     return 1
+	
+n=input()
+print(str(int(n)%sum(int(x) for x in n)==0).lower())

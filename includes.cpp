@@ -1,4 +1,4 @@
-//#define REDIRECT_INPUT
+#define REDIRECT_INPUT
 //#define OUTPUT_GAME_DATA
 //#define TIME_MEASURERMENT
 //#define DEBUG_ONE_TURN

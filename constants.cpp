@@ -14,5 +14,6 @@ static constexpr int PAIR = 2;
 static constexpr int BASE_2 = 2;
 static constexpr int BASE_10 = 10;
 static constexpr int BASE_16 = 16;
+static constexpr int FIRST_TURN = 0;
 
 const float FLOAT_MAX_RAND = static_cast<float>(RAND_MAX);

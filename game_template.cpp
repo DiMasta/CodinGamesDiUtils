@@ -1,3 +1,51 @@
+#define REDIRECT_INPUT
+//#define OUTPUT_GAME_DATA
+//#define TIME_MEASURERMENT
+//#define DEBUG_ONE_TURN
+
+#ifndef REDIRECT_INPUT
+
+#pragma GCC optimize("O3","unroll-loops","omit-frame-pointer","inline") //Optimization flags
+#pragma GCC option("arch=native","tune=native","no-zero-upper") //Enable AVX
+#pragma GCC target("avx")  //Enable AVX
+#include <x86intrin.h> //AVX/SSE Extensions
+#include <bits/stdc++.h> //All main STD libraries
+
+#else
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <list>
+#include <stack>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <ctime>
+#include <deque>
+#include <cmath>
+#include <climits>
+#include <cstring>
+#include <fstream>
+#include <iterator>
+#include <bitset>
+#include <cmath>
+#include <iomanip>
+#include <chrono>
+#include <cassert>
+
+#endif // REDIRECT_INPUT
+
+using namespace std;
+
+static const string INPUT_FILE_NAME = "input.txt";
+static const string OUTPUT_FILE_NAME = "output.txt";
+static const string EMPTY_STRING = "";
+static const string SPACE = " ";
+
+static constexpr int INVALID_IDX = -1;
+
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
@@ -21,9 +69,9 @@ public:
 
 	void debug() const;
 
-private:	
+private:
 	// Game specific members
-	
+
 	int turnsCount;
 	int stopGame;
 };
@@ -32,10 +80,10 @@ private:
 //*************************************************************************************************************
 
 Game::Game() :
-    turnsCount{ 0 },
+	turnsCount{ 0 },
 	stopGame{ false }
 {
-    
+
 }
 
 //*************************************************************************************************************
@@ -80,7 +128,7 @@ void Game::gameLoop() {
 		chrono::steady_clock::time_point end = chrono::steady_clock::now();
 		cerr << "Turn[" << turnsCount - 1 << "] execution time: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " [ms]" << std::endl;
 #endif // TIME_MEASURERM
-		
+
 #ifdef DEBUG_ONE_TURN
 		break;
 #endif // DEBUG_ONE_TURN
@@ -148,21 +196,21 @@ int main(int argc, char** argv) {
 	doctest::Context context;
 	int res = context.run();
 #else
-    
+
 #ifdef REDIRECT_INPUT
 	cerr << endl << endl << endl << "!!! REDIRECT_INPUT !!!" << endl << endl << endl;
 	ifstream in(INPUT_FILE_NAME);
-	streambuf *cinbuf = cin.rdbuf();
+	streambuf* cinbuf = cin.rdbuf();
 	cin.rdbuf(in.rdbuf());
-	
+
 	ofstream out(OUTPUT_FILE_NAME);
-	streambuf *coutbuf = cout.rdbuf();
+	streambuf* coutbuf = cout.rdbuf();
 	cout.rdbuf(out.rdbuf());
 #endif // REDIRECT_INPUT
 
 	Game game;
 	game.play();
-	
+
 #endif // TESTS
 
 	return 0;

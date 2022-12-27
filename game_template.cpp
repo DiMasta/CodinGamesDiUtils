@@ -61,13 +61,13 @@ public:
 	}
 
 	// Helper flags functions
-	void setFlag(const unsigned int flag) { flags |= flag; }
-	void unsetFlag(const unsigned int flag) { flags &= ~flag; }
-	bool hasFlag(const unsigned int flag) const { return flags & flag; }
+	void setFlag(const unsigned flag) { flags |= flag; }
+	void unsetFlag(const unsigned flag) { flags &= ~flag; }
+	bool hasFlag(const unsigned flag) const { return flags & flag; }
 	void reset() { flags = 0; }
 
 private:
-	unsigned int flags; ///< 32 bit flags
+	unsigned flags; ///< 32 bit flags
 };
 
 //-------------------------------------------------------------------------------------------------------------

@@ -29,4 +29,3 @@ git commit -am "%commit_message%"
 
 rem Push the changes to the remote repository
 git push
-

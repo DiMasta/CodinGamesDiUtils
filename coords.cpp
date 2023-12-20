@@ -26,21 +26,23 @@ public:
 	bool operator==(const Coords& other);
 	Coords operator+(const Coords& other);
 	Coords& operator+=(const Coords& other);
-    Coords operator-(const Coords& other);
+	Coords operator-(const Coords& other);
 	Coords& operator-=(const Coords& other);
-    Coords operator*(const Coords& other);
+	Coords operator*(const Coords& other);
 	Coords& operator*=(const Coords& other);
-    Coords operator*(Coord numerical);
+	Coords operator*(Coord numerical);
 	Coords& operator*=(Coord numerical);
 
 	bool isValid() const;
 	void debug() const;
-    void print() const;
-    
-    Coord distance(const Coords& coords) const;
-    void roundCoords();
+	void print() const;
+
+	Coord distance(const Coords& coords) const;
+	void roundCoords();
 
 	friend Coord distance(const Coords& point0, const Coords& point1);
+	friend ostream& operator<<(ostream& os, const Coords& coords);
+
 private:
 	Coord xCoord;
 	Coord yCoord;
@@ -140,6 +142,23 @@ Coords& Coords::operator*=(const Coords& other) {
 //*************************************************************************************************************
 //*************************************************************************************************************
 
+Coords Coords::operator*(Coord numerical) {
+	return Coords{ xCoord * numerical, yCoord * numerical };
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+Coords& Coords::operator*=(Coord numerical) {
+	xCoord *= numerical;
+	yCoord *= numerical;
+
+	return *this;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
 bool Coords::isValid() const {
 	return INVALID_COORD != xCoord && INVALID_COORD != yCoord;
 }
@@ -187,6 +206,14 @@ Coord distance(const Coords& point0, const Coords& point1) {
 	Coord distance = static_cast<Coord>(sqrt((lineXLenght * lineXLenght) + (lineYLenght * lineYLenght)));
 
 	return distance;
+}
+
+//*************************************************************************************************************
+//*************************************************************************************************************
+
+ostream& operator<<(ostream& os, const Coords& coords) {
+	os << "(" << coords.xCoord << ", " << coords.yCoord << ")";
+	return os;
 }
 
 //*************************************************************************************************************

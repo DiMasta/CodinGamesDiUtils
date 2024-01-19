@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "10000" height = "10000" fill = "rgb(206, 224, 230) " style = "background-color:brown"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink/"
+    baseProfile="tiny" version="1.2">
+  <title>Spheres</title>
+  <desc>Semi-transparent bubbles on a colored background.</desc>
+  <text id = "populationText" x = "10" y = "512" style = "font-family:sans-serif;font-size:256px;fill:black">Population Id</text>
+  <text id = "turnText" x = "10" y = "256" style = "font-family:sans-serif;font-size:256px;fill:black">Turn 0 : MY Team Simulation</text>
+  <circle cx="2000.000000" cy="3750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "1920.000000" y = "3830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">0</text>
+  <circle cx="2000.000000" cy="6250.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "1920.000000" y = "6330.000000" style = "font-family:sans-serif;font-size:256px;fill:black">1</text>
+  <circle cx="2000.000000" cy="8750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "1920.000000" y = "8830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">2</text>
+  <circle cx="4000.000000" cy="8750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "3920.000000" y = "8830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">3</text>
+  <circle cx="4000.000000" cy="6250.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "3920.000000" y = "6330.000000" style = "font-family:sans-serif;font-size:256px;fill:black">4</text>
+  <circle cx="4000.000000" cy="3750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "3920.000000" y = "3830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">5</text>
+  <circle cx="4000.000000" cy="-100.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "3920.000000" y = "-20.000000" style = "font-family:sans-serif;font-size:256px;fill:black">6</text>
+  <circle cx="8000.000000" cy="3750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "7920.000000" y = "3830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">7</text>
+  <circle cx="8000.000000" cy="6250.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "7920.000000" y = "6330.000000" style = "font-family:sans-serif;font-size:256px;fill:black">8</text>
+  <circle cx="8000.000000" cy="8750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "7920.000000" y = "8830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">9</text>
+  <circle cx="6000.000000" cy="8750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "5920.000000" y = "8830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">10</text>
+  <circle cx="6000.000000" cy="6250.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "5920.000000" y = "6330.000000" style = "font-family:sans-serif;font-size:256px;fill:black">11</text>
+  <circle cx="6000.000000" cy="3750.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "5920.000000" y = "3830.000000" style = "font-family:sans-serif;font-size:256px;fill:black">12</text>
+  <circle cx="6000.000000" cy="-100.000000" r="600" stroke="black" stroke-width="16" fill="rgb(204, 51, 0) "/>
+  <text x = "5920.000000" y = "-20.000000" style = "font-family:sans-serif;font-size:256px;fill:black">13</text>
+</svg>

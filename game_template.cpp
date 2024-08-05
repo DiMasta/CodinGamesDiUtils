@@ -1,4 +1,3 @@
-#define REDIRECT_INPUT
 //#define OUTPUT_GAME_DATA
 //#define TIME_MEASURERMENT
 //#define DEBUG_ONE_TURN
@@ -216,6 +215,36 @@ void Game::debug() const {
 #include "debug.h"
 #endif // TESTS
 
+void printCPUInfo() {
+	std::ifstream cpuinfo("/proc/cpuinfo");
+	if (!cpuinfo.is_open()) {
+		std::cerr << "Failed to open /proc/cpuinfo" << std::endl;
+		return;
+	}
+
+	std::string line;
+	std::map<std::string, std::string> stats;
+	while (std::getline(cpuinfo, line)) {
+		if (line.find("model name") != std::string::npos) {
+			stats["model name"] = line;
+		}
+
+		if (line.find("cpu cores") != std::string::npos) {
+			stats["cpu cores"] = line;
+		}
+
+		if (line.find("cpu MHz") != std::string::npos) {
+			stats["cpu MHz"] = line;
+		}
+	}
+
+	std::cerr << stats["model name"] << std::endl;
+	std::cerr << stats["cpu cores"] << std::endl;
+	std::cerr << stats["cpu MHz"] << std::endl;
+
+	cpuinfo.close();
+}
+
 int main(int argc, char** argv) {
 #ifdef TESTS
 	doctest::Context context;
@@ -231,6 +260,8 @@ int main(int argc, char** argv) {
 	ofstream out(OUTPUT_FILE_NAME);
 	streambuf* coutbuf = cout.rdbuf();
 	cout.rdbuf(out.rdbuf());
+#else
+	printCPUInfo();
 #endif // REDIRECT_INPUT
 
 	Game game;

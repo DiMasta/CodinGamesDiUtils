@@ -2,6 +2,7 @@
 
 #include <QtCore/QString>
 #include <QtGui/QPainter>
+#include <QtGui/QPainterPath>
 #include <QtSvg/QSvgGenerator>
 #include <memory>
 

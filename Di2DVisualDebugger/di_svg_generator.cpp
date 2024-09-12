@@ -2,9 +2,50 @@
 
 #include <QtWidgets/QApplication>
 #include <QtCore/QFile>
+#include <string>
+#include "memorystream.h"
+#include "error/en.h"
 
-DiSVGGenerator::DiSVGGenerator(const QString& inputTextFile, const QString& outputSVGFile) :
+using namespace std;
+using namespace rapidjson;
+
+const string JSON_FILE_VERSION{ "file_version" };
+const string JSON_IMAGE_WIDTH{ "width" };
+const string JSON_IMAGE_HEIGHT{ "height" };
+const string JSON_TURNS{ "turns" };
+const string JSON_TURN{ "turn" };
+const string JSON_ENTITIES{ "entities" };
+const string JSON_ELEMENTS{ "elements" };
+const string JSON_TYPE{ "type" };
+const string JSON_CIRCLE{ "CIRCLE" };
+const string JSON_RECT{ "RECT" };
+const string JSON_LINE{ "LINE" };
+const string JSON_TEXT{ "TEXT" };
+const string JSON_DASHED{ "dashed" };
+const string JSON_FROM{ "from" };
+const string JSON_TO{ "to" };
+const string JSON_RADIUS{ "radius" };
+const string JSON_POSITION{ "pos" };
+const string JSON_COLOR{ "color" };
+const string JSON_FILLED{ "filled" };
+const string JSON_RED{ "red" };
+const string JSON_GREEN{ "green" };
+const string JSON_BLUE{ "blue" };
+const string JSON_YELLOW{ "yellow" };
+const string JSON_ORANGE{ "orange" };
+const string JSON_PURPLE{ "purple" };
+const string JSON_GRAY{ "gray" };
+const string JSON_BLACK{ "black" };
+const string JSON_WHITE{ "white" };
+const string JSON_PINK{ "pink" };
+
+DiSVGGenerator::DiSVGGenerator(
+	const QString& inputTextFile,
+	const QString& inputJSONFile,
+	const QString& outputSVGFile
+) :
 	inputTextFile{ inputTextFile },
+	inputJSONFile{ inputJSONFile },
 	outputSVGFile{ outputSVGFile },
 	svgGenerator{},
 	svgPainter{}
@@ -96,15 +137,142 @@ bool DiSVGGenerator::generate(const int gameTurn) {
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
+void DiSVGGenerator::readAndDrawText(const Value& jsonElement) {
+	assert(jsonElement.HasMember(JSON_TYPE) && jsonElement[JSON_TYPE].IsString() && JSON_TEXT == jsonElement[JSON_TYPE].GetString());
+
+	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
+	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
+
+	assert(jsonElement.HasMember(JSON_TEXT) && jsonElement[JSON_TEXT].IsString());
+	const QString text{ jsonElement[JSON_TEXT].GetString() };
+
+	assert(jsonElement.HasMember(JSON_POSITION) && jsonElement[JSON_POSITION].IsObject());
+	GenericValue::ConstObject posObj{ jsonElement[JSON_POSITION].GetObject() };
+
+	float textPosX, textPosY;
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::readAndDrawCircle(const Value& jsonElement) {
+
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::readAndDrawRect(const Value& jsonElement) {
+
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::readAndDrawLine(const Value& jsonElement) {
+
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
+	bool gameTurnDataFound{ false };
+
+	QFile file(inputJSONFile);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug() << "Could not open the file";
+		return false;
+	}
+
+	QByteArray jsonData{ file.readAll() };
+	file.close();
+
+	const char* jsonStr{ jsonData.constData() };
+	MemoryStream ms(jsonStr, jsonData.size());
+
+	Document document;
+	document.ParseStream(ms);
+
+	if (document.HasParseError()) {
+		qDebug() << "Error parsing JSON:" << GetParseError_En(document.GetParseError())
+			<< "at offset" << document.GetErrorOffset();
+		return false;
+	}
+
+	prepareForDrawing(document);
+
+	const Value& turns{ document[JSON_TURNS] };
+	assert(static_cast<int>(turns.Size()) <= gameTurn + 1);
+
+	const Value& turn{ turns[gameTurn] };
+	assert(turn.HasMember(JSON_TURN) && turn[JSON_TURN].IsInt() && gameTurn == turn[JSON_TURN].GetInt());
+
+	drawTurn(gameTurn);
+
+	assert(turn.HasMember(JSON_ENTITIES) && turn[JSON_ENTITIES].IsArray());
+	const Value& entities{ turn[JSON_ENTITIES] };
+	for (SizeType entityIdx{ 0 }; entityIdx < entities.Size(); ++entityIdx) {
+		const Value& entity{ entities[entityIdx] };
+
+		assert(entity.HasMember(JSON_ELEMENTS) && entity[JSON_ELEMENTS].IsArray());
+		const Value& elements{ entity[JSON_ELEMENTS] };
+		for (SizeType elementIdx{ 0 }; elementIdx < elements.Size(); ++elementIdx) {
+			const Value& element{ elements[elementIdx] };
+			assert(element.HasMember(JSON_TYPE) && element[JSON_TYPE].IsString());
+
+			const string type{ element[JSON_TYPE].GetString() };
+			if (JSON_CIRCLE == type) {
+				readAndDrawCircle(element);
+			}
+			else if (JSON_RECT == type) {
+				readAndDrawRect(element);
+			}
+			else if (JSON_LINE == type) {
+				readAndDrawLine(element);
+			}
+			else if (JSON_TEXT == type) {
+				readAndDrawText(element);
+			}
+		}
+	}
+
+	return gameTurnDataFound;
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
 void DiSVGGenerator::prepareForDrawing(QTextStream& in) {
 	int fileVersion;
+	int imageWidth, imageHeight;
+
 	in >> fileVersion;
 	in.skipWhiteSpace();
 
-	int imageWidth, imageHeight;
 	in >> imageWidth >> imageHeight;
 	in.skipWhiteSpace();
 
+	prepareSVGFileForDrawing(imageWidth, imageHeight);
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::prepareForDrawing(Document& document) {
+	int imageWidth, imageHeight;
+
+	if (document.HasMember(JSON_IMAGE_WIDTH) && document[JSON_IMAGE_WIDTH].IsInt() &&
+		document.HasMember(JSON_IMAGE_HEIGHT) && document[JSON_IMAGE_HEIGHT].IsInt()
+	) {
+		prepareSVGFileForDrawing(document[JSON_IMAGE_WIDTH].GetInt(), document[JSON_IMAGE_HEIGHT].GetInt());
+	}
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::prepareSVGFileForDrawing(const int imageWidth, const int imageHeight) {
 	QFile file(outputSVGFile);
 	if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
 		file.close();

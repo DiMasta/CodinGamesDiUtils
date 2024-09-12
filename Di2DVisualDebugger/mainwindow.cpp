@@ -25,13 +25,18 @@ static inline QString picturesLocation() {
 	return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).value(0, QDir::currentPath());
 }
 
-MainWindow::MainWindow(const QString& inputTextFile, const QString& outputSVGFile)
+MainWindow::MainWindow(
+	const QString& inputTextFile,
+	const QString& inputJSONFile,
+	const QString& outputSVGFile
+)
 	: QMainWindow()
 	, m_view(new SvgView)
 	, m_zoomLabel(new QLabel)
 	, inputTextFile{ inputTextFile }
+	, inputJSONFile{ inputJSONFile }
 	, outputSVGFile{ outputSVGFile }
-	, diSVGGenerator{ inputTextFile, outputSVGFile }
+	, diSVGGenerator{ inputTextFile, inputJSONFile, outputSVGFile }
 {
 	//QToolBar* toolBar = new QToolBar(this);
 	//addToolBar(Qt::TopToolBarArea, toolBar);
@@ -112,7 +117,8 @@ MainWindow::MainWindow(const QString& inputTextFile, const QString& outputSVGFil
 	updateZoomLabel();
 	connect(m_view, &SvgView::zoomChanged, this, &MainWindow::updateZoomLabel);
 
-	diSVGGenerator.generate(0);
+	//diSVGGenerator.generate(0);
+	diSVGGenerator.generateFromJSON(0);
 	loadFile(outputSVGFile);
 }
 

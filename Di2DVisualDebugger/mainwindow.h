@@ -21,7 +21,11 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(const QString& inputTextFile, const QString& outputSVGFile);
+	MainWindow(
+		const QString& inputTextFile,
+		const QString& inputJSONFile,
+		const QString& outputSVGFile
+	);
 
 	bool loadFile(const QString& path);
 
@@ -49,6 +53,7 @@ private:
 
 	QString m_currentPath;
 	QString inputTextFile;
+	QString inputJSONFile;
 	QString outputSVGFile;
 	DiSVGGenerator diSVGGenerator;
 };

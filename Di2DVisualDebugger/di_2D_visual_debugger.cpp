@@ -18,7 +18,11 @@ int main(int argc, char** argv) {
 	parser.addPositionalArgument("file", "The file to open.");
 	parser.process(app);
 
-	MainWindow window{ "C:/VLADO/CodinGame/FallChallenge2023/output.txt", "C:/VLADO/CodinGame/CodinGamesDiUtils/output/output.svg" };
+	MainWindow window{ 
+		"C:/VLADO/CodinGame/FallChallenge2023/output.txt",
+		"C:/VLADO/CodinGame/FallChallenge2023/game.json",
+		"C:/VLADO/CodinGame/CodinGamesDiUtils/output/output.svg"
+	};
 	window.show();
 	return app.exec();
 }

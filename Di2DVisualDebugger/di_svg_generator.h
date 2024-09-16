@@ -61,6 +61,9 @@ private: ///< Function members
 	/// @param[in] imageHeight actual height for the state 2D representation
 	void prepareSVGFileForDrawing(const int imageWidth, const int imageHeight);
 
+	/// Draw the given 2D elements in the JSON array object
+	void draw2DElements(const rapidjson::Value& elements);
+
 	/// Functions for reading the properties of the 2D elements and drawing them on the SVG file
 	void drawTurn(const int turnIdx);
 	void readAndDrawText(QTextStream& in, const bool skipElement);
@@ -73,10 +76,10 @@ private: ///< Function members
 	void readAndDrawRect(const rapidjson::Value& jsonElement);
 	void readAndDrawLine(const rapidjson::Value& jsonElement);
 
-	void drawText();
-	void drawCircle();
-	void drawRect();
-	void drawLine();
+	void drawText(const QString& colorStr, const float textPosX, const float textPosY, const QString& text);
+	void drawCircle(const QString& colorStr, const bool filled, const float posX, const float posY, const float radius);
+	void drawRect(const QString& colorStr, const bool filled, const float topLeftX, const float topLeftY, const float width, const float height);
+	void drawLine(const QString& colorStr, const bool dashed, const float fromX, const float fromY, const float toX, const float toY);
 
 private: ///< Data members
 	const QString inputTextFile; ///< Describes the state and what shapes and text should be drawn

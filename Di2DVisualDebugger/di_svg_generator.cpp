@@ -21,6 +21,7 @@ const string JSON_CIRCLE{ "CIRCLE" };
 const string JSON_RECT{ "RECT" };
 const string JSON_LINE{ "LINE" };
 const string JSON_TEXT{ "TEXT" };
+const string JSON_STRING{ "string" };
 const string JSON_DASHED{ "dashed" };
 const string JSON_FROM{ "from" };
 const string JSON_TO{ "to" };
@@ -38,6 +39,13 @@ const string JSON_GRAY{ "gray" };
 const string JSON_BLACK{ "black" };
 const string JSON_WHITE{ "white" };
 const string JSON_PINK{ "pink" };
+const string JSON_X{ "x" };
+const string JSON_Y{ "y" };
+const string JSON_DIMS{ "dims" };
+const string JSON_WIDTH{ "width" };
+const string JSON_HEIGHT{ "height" };
+const string JSON_START{ "start" };
+const string JSON_END{ "end" };
 
 DiSVGGenerator::DiSVGGenerator(
 	const QString& inputTextFile,
@@ -59,7 +67,8 @@ DiSVGGenerator::DiSVGGenerator(
 bool DiSVGGenerator::generateNextTurn() {
 	bool gameTurnDataFound{ false };
 
-	if (generate(currentGameTurn + 1)) {
+	//if (generate(currentGameTurn + 1)) {
+	if (generateFromJSON(currentGameTurn + 1)) {
 		++currentGameTurn;
 		gameTurnDataFound = true;
 	}
@@ -143,34 +152,156 @@ void DiSVGGenerator::readAndDrawText(const Value& jsonElement) {
 	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
 	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
 
-	assert(jsonElement.HasMember(JSON_TEXT) && jsonElement[JSON_TEXT].IsString());
-	const QString text{ jsonElement[JSON_TEXT].GetString() };
+	assert(jsonElement.HasMember(JSON_STRING) && jsonElement[JSON_STRING].IsString());
+	const QString text{ jsonElement[JSON_STRING].GetString() };
 
 	assert(jsonElement.HasMember(JSON_POSITION) && jsonElement[JSON_POSITION].IsObject());
-	GenericValue::ConstObject posObj{ jsonElement[JSON_POSITION].GetObject() };
+	const Value& pos{ jsonElement[JSON_POSITION] };
 
-	float textPosX, textPosY;
+	assert(pos.HasMember(JSON_X) && pos[JSON_X].IsFloat() && pos.HasMember(JSON_Y) && pos[JSON_Y].IsFloat());
+	const float posX{ pos[JSON_X].GetFloat() };
+	const float posY{ pos[JSON_Y].GetFloat() };
+
+	drawText(colorStr, posX, posY, text);
 }
 
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
 void DiSVGGenerator::readAndDrawCircle(const Value& jsonElement) {
+	assert(jsonElement.HasMember(JSON_TYPE) && jsonElement[JSON_TYPE].IsString() && JSON_CIRCLE == jsonElement[JSON_TYPE].GetString());
 
+	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
+	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
+
+	assert(jsonElement.HasMember(JSON_FILLED) && jsonElement[JSON_FILLED].IsBool());
+	const bool filled{ jsonElement[JSON_FILLED].GetBool() };
+
+	assert(jsonElement.HasMember(JSON_RADIUS) && jsonElement[JSON_RADIUS].IsFloat());
+	const float radius{ jsonElement[JSON_RADIUS].GetFloat() };
+
+	assert(jsonElement.HasMember(JSON_POSITION) && jsonElement[JSON_POSITION].IsObject());
+	const Value& pos{ jsonElement[JSON_POSITION] };
+
+	assert(pos.HasMember(JSON_X) && pos[JSON_X].IsFloat() && pos.HasMember(JSON_Y) && pos[JSON_Y].IsFloat());
+	const float posX{ pos[JSON_X].GetFloat() };
+	const float posY{ pos[JSON_Y].GetFloat() };
+
+	drawCircle(colorStr, filled, posX, posY, radius);
 }
 
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
 void DiSVGGenerator::readAndDrawRect(const Value& jsonElement) {
+	assert(jsonElement.HasMember(JSON_TYPE) && jsonElement[JSON_TYPE].IsString() && JSON_RECT == jsonElement[JSON_TYPE].GetString());
 
+	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
+	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
+
+	assert(jsonElement.HasMember(JSON_FILLED) && jsonElement[JSON_FILLED].IsBool());
+	const bool filled{ jsonElement[JSON_FILLED].GetBool() };
+
+	assert(jsonElement.HasMember(JSON_POSITION) && jsonElement[JSON_POSITION].IsObject());
+	const Value& pos{ jsonElement[JSON_POSITION] };
+
+	assert(pos.HasMember(JSON_X) && pos[JSON_X].IsFloat() && pos.HasMember(JSON_Y) && pos[JSON_Y].IsFloat());
+	const float posX{ pos[JSON_X].GetFloat() };
+	const float posY{ pos[JSON_Y].GetFloat() };
+
+	assert(jsonElement.HasMember(JSON_DIMS) && jsonElement[JSON_DIMS].IsObject());
+	const Value& dims{ jsonElement[JSON_DIMS] };
+
+	assert(dims.HasMember(JSON_WIDTH) && dims[JSON_WIDTH].IsFloat() && dims.HasMember(JSON_HEIGHT) && dims[JSON_HEIGHT].IsFloat());
+	const float width{ dims[JSON_WIDTH].GetFloat() };
+	const float height{ dims[JSON_HEIGHT].GetFloat() };
+
+	drawRect(colorStr, filled, posX, posY, width, height);
 }
 
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
 void DiSVGGenerator::readAndDrawLine(const Value& jsonElement) {
+	assert(jsonElement.HasMember(JSON_TYPE) && jsonElement[JSON_TYPE].IsString() && JSON_LINE == jsonElement[JSON_TYPE].GetString());
 
+	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
+	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
+
+	assert(jsonElement.HasMember(JSON_DASHED) && jsonElement[JSON_DASHED].IsBool());
+	const bool dashed{ jsonElement[JSON_DASHED].GetBool() };
+
+	assert(jsonElement.HasMember(JSON_START) && jsonElement[JSON_START].IsObject());
+	const Value& start{ jsonElement[JSON_START] };
+
+	assert(start.HasMember(JSON_X) && start[JSON_X].IsFloat() && start.HasMember(JSON_Y) && start[JSON_Y].IsFloat());
+	const float startX{ start[JSON_X].GetFloat() };
+	const float startY{ start[JSON_Y].GetFloat() };
+
+	assert(jsonElement.HasMember(JSON_END) && jsonElement[JSON_END].IsObject());
+	const Value& end{ jsonElement[JSON_END] };
+
+	assert(end.HasMember(JSON_X) && end[JSON_X].IsFloat() && end.HasMember(JSON_Y) && end[JSON_Y].IsFloat());
+	const float endX{ end[JSON_X].GetFloat() };
+	const float endY{ end[JSON_Y].GetFloat() };
+
+	drawLine(colorStr, dashed, startX, startY, endX, endY);
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::drawText(const QString& colorStr, const float textPosX, const float textPosY, const QString& text) {
+	svgPainter->setFont(QFont(TEXT_FONT, TEXT_FONT_SIZE));
+	QColor color{ colorStr };
+	svgPainter->setPen(QPen{ color });
+	svgPainter->drawText(textPosX, textPosY, text);
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::drawCircle(const QString& colorStr, const bool filled, const float posX, const float posY, const float radius) {
+	QColor color{ colorStr };
+	svgPainter->setPen(QPen{ color, static_cast<qreal>(LINES_WIDTH) });
+
+	svgPainter->setBrush(Qt::transparent);
+	if (filled) {
+		svgPainter->setBrush(color);
+	}
+
+	svgPainter->drawEllipse(QPoint{ (int)posX, (int)posY }, (int)radius, (int)radius);
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::drawRect(const QString& colorStr, const bool filled, const float topLeftX, const float topLeftY, const float width, const float height) {
+	QColor color{ colorStr };
+	svgPainter->setPen(QPen{ color, static_cast<qreal>(LINES_WIDTH) });
+
+	svgPainter->setBrush(Qt::transparent);
+	if (filled) {
+		svgPainter->setBrush(color);
+	}
+
+	svgPainter->drawRect(topLeftX, topLeftY, width, height);
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::drawLine(const QString& colorStr, const bool dashed, const float fromX, const float fromY, const float toX, const float toY) {
+	QColor color{ colorStr };
+	QPen pen{ color, static_cast<qreal>(LINES_WIDTH / 2) };
+	if (dashed) {
+		pen.setStyle(Qt::DashLine);
+	}
+	else {
+		pen.setStyle(Qt::SolidLine);
+	}
+	svgPainter->setPen(pen);
+	svgPainter->drawLine(fromX, fromY, toX, toY);
 }
 
 //*****************************************************************************************************************************
@@ -203,7 +334,7 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
 	prepareForDrawing(document);
 
 	const Value& turns{ document[JSON_TURNS] };
-	assert(static_cast<int>(turns.Size()) <= gameTurn + 1);
+	assert(gameTurn < static_cast<int>(turns.Size()));
 
 	const Value& turn{ turns[gameTurn] };
 	assert(turn.HasMember(JSON_TURN) && turn[JSON_TURN].IsInt() && gameTurn == turn[JSON_TURN].GetInt());
@@ -217,27 +348,40 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
 
 		assert(entity.HasMember(JSON_ELEMENTS) && entity[JSON_ELEMENTS].IsArray());
 		const Value& elements{ entity[JSON_ELEMENTS] };
-		for (SizeType elementIdx{ 0 }; elementIdx < elements.Size(); ++elementIdx) {
-			const Value& element{ elements[elementIdx] };
-			assert(element.HasMember(JSON_TYPE) && element[JSON_TYPE].IsString());
-
-			const string type{ element[JSON_TYPE].GetString() };
-			if (JSON_CIRCLE == type) {
-				readAndDrawCircle(element);
-			}
-			else if (JSON_RECT == type) {
-				readAndDrawRect(element);
-			}
-			else if (JSON_LINE == type) {
-				readAndDrawLine(element);
-			}
-			else if (JSON_TEXT == type) {
-				readAndDrawText(element);
-			}
-		}
+		draw2DElements(elements);
 	}
 
+	draw2DElements(document[JSON_ELEMENTS]);
+
+	svgPainter->end();
+
 	return gameTurnDataFound;
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+void DiSVGGenerator::draw2DElements(const rapidjson::Value& elements) {
+	assert(elements.IsArray());
+
+	for (SizeType elementIdx{ 0 }; elementIdx < elements.Size(); ++elementIdx) {
+		const Value& element{ elements[elementIdx] };
+		assert(element.HasMember(JSON_TYPE) && element[JSON_TYPE].IsString());
+	
+		const string type{ element[JSON_TYPE].GetString() };
+		if (JSON_CIRCLE == type) {
+			readAndDrawCircle(element);
+		}
+		else if (JSON_RECT == type) {
+			readAndDrawRect(element);
+		}
+		else if (JSON_LINE == type) {
+			readAndDrawLine(element);
+		}
+		else if (JSON_TEXT == type) {
+			readAndDrawText(element);
+		}
+	}
 }
 
 //*****************************************************************************************************************************
@@ -260,8 +404,6 @@ void DiSVGGenerator::prepareForDrawing(QTextStream& in) {
 //*****************************************************************************************************************************
 
 void DiSVGGenerator::prepareForDrawing(Document& document) {
-	int imageWidth, imageHeight;
-
 	if (document.HasMember(JSON_IMAGE_WIDTH) && document[JSON_IMAGE_WIDTH].IsInt() &&
 		document.HasMember(JSON_IMAGE_HEIGHT) && document[JSON_IMAGE_HEIGHT].IsInt()
 	) {
@@ -304,22 +446,22 @@ void DiSVGGenerator::drawTurn(const int turnIdx) {
 	svgPainter->setPen(Qt::white);
 	svgPainter->drawText(TEXT_FONT_SIZE / 2, TEXT_FONT_SIZE * 2, turnStr);
 
-	QList<QPointF> points;
-	points.append({ 0, 0 });
-	points.append({ 100, 100 });
-	points.append({ 200, 100 });
-	points.append({ 500, 500 });
-
-	QPainterPath path;
-	path.moveTo(points[0]);  // Move to the first point
-
-	for (int i = 1; i < points.size(); ++i) {
-		path.lineTo(points[i]);  // Draw lines between points
-	}
-
-	svgPainter->setPen(QPen{ Qt::red, static_cast<qreal>(LINES_WIDTH) });
-	svgPainter->setBrush(Qt::NoBrush);
-	svgPainter->drawPath(path);
+	//QList<QPointF> points;
+	//points.append({ 0, 0 });
+	//points.append({ 100, 100 });
+	//points.append({ 200, 100 });
+	//points.append({ 500, 500 });
+	//
+	//QPainterPath path;
+	//path.moveTo(points[0]);  // Move to the first point
+	//
+	//for (int i = 1; i < points.size(); ++i) {
+	//	path.lineTo(points[i]);  // Draw lines between points
+	//}
+	//
+	//svgPainter->setPen(QPen{ Qt::red, static_cast<qreal>(LINES_WIDTH) });
+	//svgPainter->setBrush(Qt::NoBrush);
+	//svgPainter->drawPath(path);
 }
 
 //*****************************************************************************************************************************
@@ -337,10 +479,7 @@ void DiSVGGenerator::readAndDrawText(QTextStream & in, const bool skipElement) {
 	in.skipWhiteSpace();
 
 	if (!skipElement) {
-		svgPainter->setFont(QFont(TEXT_FONT, TEXT_FONT_SIZE));
-		QColor color{ colorStr };
-		svgPainter->setPen(QPen{ color });
-		svgPainter->drawText(textPosX, textPosY, text);
+		drawText(colorStr, textPosX, textPosY, text);
 	}
 }
 
@@ -360,15 +499,7 @@ void DiSVGGenerator::readAndDrawCircle(QTextStream& in, const bool skipElement) 
 
 
 	if (!skipElement) {
-		QColor color{ colorStr };
-		svgPainter->setPen(QPen{ color, static_cast<qreal>(LINES_WIDTH) });
-
-		svgPainter->setBrush(Qt::transparent);
-		if (filled) {
-			svgPainter->setBrush(color);
-		}
-
-		svgPainter->drawEllipse(QPoint{ (int)posX, (int)posY }, (int)radius, (int)radius);
+		drawCircle(colorStr, filled, posX, posY, radius);
 	}
 }
 
@@ -387,15 +518,7 @@ void DiSVGGenerator::readAndDrawRect(QTextStream& in, const bool skipElement) {
 	in.skipWhiteSpace();
 
 	if (!skipElement) {
-		QColor color{ colorStr };
-		svgPainter->setPen(QPen{ color, static_cast<qreal>(LINES_WIDTH) });
-
-		svgPainter->setBrush(Qt::transparent);
-		if (filled) {
-			svgPainter->setBrush(color);
-		}
-
-		svgPainter->drawRect(topLeftX, topLeftY, width, height);
+		drawRect(colorStr, filled, topLeftX, topLeftY, width, height);
 	}
 }
 
@@ -406,23 +529,14 @@ void DiSVGGenerator::readAndDrawLine(QTextStream& in, const bool skipElement) {
 	int dashed;
 	in >> dashed;
 
-	float fromX, formY, toX, toY;
-	in >> fromX >> formY >> toX >> toY;
+	float fromX, fromY, toX, toY;
+	in >> fromX >> fromY >> toX >> toY;
 
 	QString colorStr;
 	in >> colorStr;
 	in.skipWhiteSpace();
 
 	if (!skipElement) {
-		QColor color{ colorStr };
-		QPen pen{ color, static_cast<qreal>(LINES_WIDTH / 2) };
-		if (dashed) {
-			pen.setStyle(Qt::DashLine);
-		}
-		else {
-			pen.setStyle(Qt::SolidLine);
-		}
-		svgPainter->setPen(pen);
-		svgPainter->drawLine(fromX, formY, toX, toY);
+		drawLine(colorStr, dashed, fromX, fromY, toX, toY);
 	}
 }

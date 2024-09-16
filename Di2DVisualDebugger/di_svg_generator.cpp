@@ -252,6 +252,13 @@ void DiSVGGenerator::readAndDrawLine(const Value& jsonElement) {
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
+void DiSVGGenerator::readAndDrawPath(const rapidjson::Value& jsonElement) {
+
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
 void DiSVGGenerator::drawText(const QString& colorStr, const float textPosX, const float textPosY, const QString& text) {
 	svgPainter->setFont(QFont(TEXT_FONT, TEXT_FONT_SIZE));
 	QColor color{ colorStr };
@@ -446,24 +453,6 @@ void DiSVGGenerator::drawTurn(const int turnIdx) {
 	svgPainter->setFont(QFont(TEXT_FONT, TEXT_FONT_SIZE * 2));
 	svgPainter->setPen(Qt::white);
 	svgPainter->drawText(TEXT_FONT_SIZE / 2, TEXT_FONT_SIZE * 2, turnStr);
-
-
-	QList<QPointF> points;
-	points.append({ 0, 0 });
-	points.append({ 100, 100 });
-	points.append({ 200, 100 });
-	points.append({ 500, 500 });
-	
-	
-	path.moveTo(points[0]);  // Move to the first point
-	
-	for (int i = 1; i < points.size(); ++i) {
-		path.lineTo(points[i]);  // Draw lines between points
-	}
-	
-	svgPainter->setPen(QPen{ Qt::red, static_cast<qreal>(LINES_WIDTH) });
-	svgPainter->setBrush(Qt::NoBrush);
-	svgPainter->drawPath(path);
 }
 
 //*****************************************************************************************************************************

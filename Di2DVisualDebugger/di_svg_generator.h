@@ -75,6 +75,7 @@ private: ///< Function members
 	void readAndDrawCircle(const rapidjson::Value& jsonElement);
 	void readAndDrawRect(const rapidjson::Value& jsonElement);
 	void readAndDrawLine(const rapidjson::Value& jsonElement);
+	void readAndDrawPath(const rapidjson::Value& jsonElement);
 
 	void drawText(const QString& colorStr, const float textPosX, const float textPosY, const QString& text);
 	void drawCircle(const QString& colorStr, const bool filled, const float posX, const float posY, const float radius);
@@ -88,7 +89,6 @@ private: ///< Data members
 
 	std::unique_ptr<QSvgGenerator> svgGenerator; ///< The generator for the 2D SVG state representation
 	std::unique_ptr<QPainter> svgPainter; ///< The painter, which is used to draw on the output SVG file
-	QPainterPath path;
 
 	int currentGameTurn{ 0 }; ///< The game turn for, which visual debug information is generated
 };

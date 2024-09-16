@@ -88,6 +88,7 @@ private: ///< Data members
 
 	std::unique_ptr<QSvgGenerator> svgGenerator; ///< The generator for the 2D SVG state representation
 	std::unique_ptr<QPainter> svgPainter; ///< The painter, which is used to draw on the output SVG file
+	QPainterPath path;
 
 	int currentGameTurn{ 0 }; ///< The game turn for, which visual debug information is generated
 };

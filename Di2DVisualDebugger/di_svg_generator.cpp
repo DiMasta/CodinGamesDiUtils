@@ -83,7 +83,8 @@ bool DiSVGGenerator::generateNextTurn() {
 bool DiSVGGenerator::generatePrevTurn() {
 	bool gameTurnDataFound{ false };
 
-	if (generate(currentGameTurn - 1)) {
+	//if (generate(currentGameTurn - 1)) {
+	if (generateFromJSON(currentGameTurn - 1)) {
 		--currentGameTurn;
 		gameTurnDataFound = true;
 	}
@@ -308,7 +309,7 @@ void DiSVGGenerator::drawLine(const QString& colorStr, const bool dashed, const 
 //*****************************************************************************************************************************
 
 bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
-	bool gameTurnDataFound{ false };
+	bool gameTurnDataFound{ true };
 
 	QFile file(inputJSONFile);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {

@@ -101,7 +101,7 @@ bool DiSVGGenerator::generateNextSubTurn() {
 	bool gameTurnDataFound{ false };
 
 	if (generateFromJSON(currentGameTurn, currentGameSubTurn + 1)) {
-		++currentGameTurn;
+		++currentGameSubTurn;
 		gameTurnDataFound = true;
 	}
 
@@ -115,7 +115,7 @@ bool DiSVGGenerator::generatePrevSubTurn() {
 	bool gameTurnDataFound{ false };
 
 	if (generateFromJSON(currentGameTurn, currentGameSubTurn - 1)) {
-		--currentGameTurn;
+		--currentGameSubTurn;
 		gameTurnDataFound = true;
 	}
 
@@ -147,7 +147,7 @@ bool DiSVGGenerator::generate(const int gameTurn) {
 			in.skipWhiteSpace();
 
 			if (gameTurn == turnIdx) {
-				drawTurn(turnIdx);
+				drawTurn(turnIdx, -1);
 				skipElement = false;
 				gameTurnDataFound = true;
 			}
@@ -393,7 +393,7 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn, const int gameSubTurn)
 	const Value& turn{ turns[gameTurn] };
 	assert(turn.HasMember(JSON_TURN) && turn[JSON_TURN].IsInt() && gameTurn == turn[JSON_TURN].GetInt());
 
-	drawTurn(gameTurn);
+	drawTurn(gameTurn, gameSubTurn);
 
 	assert(turn.HasMember(JSON_ENTITIES) && turn[JSON_ENTITIES].IsArray());
 	const Value& entities{ turn[JSON_ENTITIES] };
@@ -503,8 +503,12 @@ void DiSVGGenerator::prepareSVGFileForDrawing(const int imageWidth, const int im
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
-void DiSVGGenerator::drawTurn(const int turnIdx) {
-	const QString turnStr{ QString("TURN: %1").arg(turnIdx) };
+void DiSVGGenerator::drawTurn(const int turnIdx, const int subTurnIdx) {
+	QString turnStr{ QString("TURN: %1").arg(turnIdx) };
+
+	if (-1 != subTurnIdx) {
+		turnStr = QString("%1:%2").arg(turnStr, QString::number(subTurnIdx));
+	}
 
 	svgPainter->setFont(QFont(TEXT_FONT, TEXT_FONT_SIZE * 2));
 	svgPainter->setPen(Qt::white);

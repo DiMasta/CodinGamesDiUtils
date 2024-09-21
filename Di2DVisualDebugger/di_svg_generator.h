@@ -68,7 +68,7 @@ private: ///< Function members
 	void draw2DElements(const rapidjson::Value& elements);
 
 	/// Functions for reading the properties of the 2D elements and drawing them on the SVG file
-	void drawTurn(const int turnIdx);
+	void drawTurn(const int turnIdx, const int subTurnIdx);
 	void readAndDrawText(QTextStream& in, const bool skipElement);
 	void readAndDrawCircle(QTextStream& in, const bool skipElement);
 	void readAndDrawRect(QTextStream& in, const bool skipElement);

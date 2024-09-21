@@ -118,7 +118,7 @@ MainWindow::MainWindow(
 	connect(m_view, &SvgView::zoomChanged, this, &MainWindow::updateZoomLabel);
 
 	//diSVGGenerator.generate(0);
-	diSVGGenerator.generateFromJSON(0);
+	diSVGGenerator.generateFromJSON(0, -1);
 	loadFile(outputSVGFile);
 }
 
@@ -218,6 +218,16 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 	}
 	else if (event->key() == Qt::Key_A) {
 		if (diSVGGenerator.generatePrevTurn()) {
+			loadFile(outputSVGFile);
+		}
+	}
+	else if (event->key() == Qt::Key_W) {
+		if (diSVGGenerator.generateNextSubTurn()) {
+			loadFile(outputSVGFile);
+		}
+	}
+	else if (event->key() == Qt::Key_S) {
+		if (diSVGGenerator.generatePrevSubTurn()) {
 			loadFile(outputSVGFile);
 		}
 	}

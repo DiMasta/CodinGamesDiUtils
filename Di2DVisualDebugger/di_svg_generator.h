@@ -35,6 +35,8 @@ public:
 	/// Generate visual debug information for new turns
 	bool generateNextTurn();
 	bool generatePrevTurn();
+	bool generateNextSubTurn();
+	bool generatePrevSubTurn();
 
 	/// Generate the actual SVG file, which will be used to present the 2D game state
 	/// @param[in] gameTurn the turn to read and display
@@ -43,8 +45,9 @@ public:
 
 	/// Read the game data from the JSON file and generate the actual SVG file, which will be used to present the 2D game state
 	/// @param[in] gameTurn the turn to read and display
+	/// @param[in] gameSubTurn the sub turn to read and display the search data for
 	/// @return true if data for the given turn is found
-	bool generateFromJSON(const int gameTurn);
+	bool generateFromJSON(const int gameTurn, const int gameSubTurn);
 
 private: ///< Function members
 
@@ -91,4 +94,5 @@ private: ///< Data members
 	std::unique_ptr<QPainter> svgPainter; ///< The painter, which is used to draw on the output SVG file
 
 	int currentGameTurn{ 0 }; ///< The game turn for, which visual debug information is generated
+	int currentGameSubTurn{ -1 }; ///< The game sub turn for, which visual debug information is generated, containing search data -1 means only the current turn is rendered
 };

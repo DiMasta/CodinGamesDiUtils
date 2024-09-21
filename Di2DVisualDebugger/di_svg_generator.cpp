@@ -14,12 +14,15 @@ const string JSON_IMAGE_WIDTH{ "width" };
 const string JSON_IMAGE_HEIGHT{ "height" };
 const string JSON_TURNS{ "turns" };
 const string JSON_TURN{ "turn" };
+const string JSON_SUB_TURNS{ "sub_turns" };
+const string JSON_SUB_TURN{ "sub_turn" };
 const string JSON_ENTITIES{ "entities" };
 const string JSON_ELEMENTS{ "elements" };
 const string JSON_TYPE{ "type" };
 const string JSON_CIRCLE{ "CIRCLE" };
 const string JSON_RECT{ "RECT" };
 const string JSON_LINE{ "LINE" };
+const string JSON_PATH{ "PATH" };
 const string JSON_TEXT{ "TEXT" };
 const string JSON_STRING{ "string" };
 const string JSON_DASHED{ "dashed" };
@@ -28,6 +31,7 @@ const string JSON_TO{ "to" };
 const string JSON_RADIUS{ "radius" };
 const string JSON_POSITION{ "pos" };
 const string JSON_COLOR{ "color" };
+const string JSON_COORDS{ "coords" };
 const string JSON_FILLED{ "filled" };
 const string JSON_RED{ "red" };
 const string JSON_GREEN{ "green" };
@@ -67,8 +71,7 @@ DiSVGGenerator::DiSVGGenerator(
 bool DiSVGGenerator::generateNextTurn() {
 	bool gameTurnDataFound{ false };
 
-	//if (generate(currentGameTurn + 1)) {
-	if (generateFromJSON(currentGameTurn + 1)) {
+	if (generateFromJSON(currentGameTurn + 1, currentGameSubTurn)) {
 		++currentGameTurn;
 		gameTurnDataFound = true;
 	}
@@ -83,8 +86,35 @@ bool DiSVGGenerator::generateNextTurn() {
 bool DiSVGGenerator::generatePrevTurn() {
 	bool gameTurnDataFound{ false };
 
-	//if (generate(currentGameTurn - 1)) {
-	if (generateFromJSON(currentGameTurn - 1)) {
+	if (generateFromJSON(currentGameTurn - 1, currentGameSubTurn)) {
+		--currentGameTurn;
+		gameTurnDataFound = true;
+	}
+
+	return gameTurnDataFound;
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+bool DiSVGGenerator::generateNextSubTurn() {
+	bool gameTurnDataFound{ false };
+
+	if (generateFromJSON(currentGameTurn, currentGameSubTurn + 1)) {
+		++currentGameTurn;
+		gameTurnDataFound = true;
+	}
+
+	return gameTurnDataFound;
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+bool DiSVGGenerator::generatePrevSubTurn() {
+	bool gameTurnDataFound{ false };
+
+	if (generateFromJSON(currentGameTurn, currentGameSubTurn - 1)) {
 		--currentGameTurn;
 		gameTurnDataFound = true;
 	}
@@ -253,7 +283,23 @@ void DiSVGGenerator::readAndDrawLine(const Value& jsonElement) {
 //*****************************************************************************************************************************
 
 void DiSVGGenerator::readAndDrawPath(const rapidjson::Value& jsonElement) {
+	assert(jsonElement.HasMember(JSON_TYPE) && jsonElement[JSON_TYPE].IsString() && JSON_PATH == jsonElement[JSON_TYPE].GetString());
 
+	assert(jsonElement.HasMember(JSON_COLOR) && jsonElement[JSON_COLOR].IsString());
+	const QString colorStr{ jsonElement[JSON_COLOR].GetString() };
+
+	assert(jsonElement.HasMember(JSON_COORDS) && jsonElement[JSON_COORDS].IsArray() && (0 == jsonElement[JSON_COORDS].Size() % 2));
+	const Value& coordsArr{ jsonElement[JSON_COORDS] };
+	for (int coordIdx{ 0 }; coordIdx < static_cast<int>(jsonElement[JSON_COORDS].Size()) - 2; coordIdx += 2) {
+		drawLine(
+			colorStr,
+			false,
+			coordsArr[coordIdx + 0].GetFloat(),
+			coordsArr[coordIdx + 1].GetFloat(),
+			coordsArr[coordIdx + 2].GetFloat(),
+			coordsArr[coordIdx + 3].GetFloat()
+		);
+	}
 }
 
 //*****************************************************************************************************************************
@@ -315,7 +361,7 @@ void DiSVGGenerator::drawLine(const QString& colorStr, const bool dashed, const 
 //*****************************************************************************************************************************
 //*****************************************************************************************************************************
 
-bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
+bool DiSVGGenerator::generateFromJSON(const int gameTurn, const int gameSubTurn) {
 	bool gameTurnDataFound{ true };
 
 	QFile file(inputJSONFile);
@@ -355,11 +401,18 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn) {
 		const Value& entity{ entities[entityIdx] };
 
 		assert(entity.HasMember(JSON_ELEMENTS) && entity[JSON_ELEMENTS].IsArray());
-		const Value& elements{ entity[JSON_ELEMENTS] };
-		draw2DElements(elements);
+		draw2DElements(entity[JSON_ELEMENTS]);
 	}
 
 	draw2DElements(document[JSON_ELEMENTS]);
+
+	if (-1 != gameSubTurn) {
+		assert(turn.HasMember(JSON_SUB_TURNS) && turn[JSON_SUB_TURNS].IsArray() && gameSubTurn < static_cast<int>(turn[JSON_SUB_TURNS].Size()));
+		const Value& subTurn{ turn[JSON_SUB_TURNS][gameSubTurn] };
+
+		assert(subTurn.HasMember(JSON_ELEMENTS) && subTurn[JSON_ELEMENTS].IsArray());
+		draw2DElements(subTurn[JSON_ELEMENTS]);
+	}
 
 	svgPainter->end();
 
@@ -388,6 +441,9 @@ void DiSVGGenerator::draw2DElements(const rapidjson::Value& elements) {
 		}
 		else if (JSON_TEXT == type) {
 			readAndDrawText(element);
+		}
+		else if (JSON_PATH == type) {
+			readAndDrawPath(element);
 		}
 	}
 }

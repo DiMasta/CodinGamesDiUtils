@@ -71,8 +71,9 @@ DiSVGGenerator::DiSVGGenerator(
 bool DiSVGGenerator::generateNextTurn() {
 	bool gameTurnDataFound{ false };
 
-	if (generateFromJSON(currentGameTurn + 1, currentGameSubTurn)) {
+	if (generateFromJSON(currentGameTurn + 1, INVALID_SUB_TURN_IDX)) {
 		++currentGameTurn;
+		currentGameSubTurn = INVALID_SUB_TURN_IDX;
 		gameTurnDataFound = true;
 	}
 
@@ -86,8 +87,9 @@ bool DiSVGGenerator::generateNextTurn() {
 bool DiSVGGenerator::generatePrevTurn() {
 	bool gameTurnDataFound{ false };
 
-	if (generateFromJSON(currentGameTurn - 1, currentGameSubTurn)) {
+	if (generateFromJSON(currentGameTurn - 1, getLastSubTurnIdx(currentGameTurn - 1))) {
 		--currentGameTurn;
+		currentGameSubTurn = getLastSubTurnIdx(currentGameTurn);
 		gameTurnDataFound = true;
 	}
 
@@ -100,9 +102,12 @@ bool DiSVGGenerator::generatePrevTurn() {
 bool DiSVGGenerator::generateNextSubTurn() {
 	bool gameTurnDataFound{ false };
 
-	if (generateFromJSON(currentGameTurn, currentGameSubTurn + 1)) {
-		++currentGameSubTurn;
+	if (generateFromJSON(currentGameTurn, ((INVALID_SUB_TURN_IDX == currentGameSubTurn) ? 0 : currentGameSubTurn + 1))) {
+		currentGameSubTurn = ((INVALID_SUB_TURN_IDX == currentGameSubTurn) ? 0 : currentGameSubTurn + 1);
 		gameTurnDataFound = true;
+	}
+	else {
+		gameTurnDataFound = generateNextTurn();
 	}
 
 	return gameTurnDataFound;
@@ -117,6 +122,9 @@ bool DiSVGGenerator::generatePrevSubTurn() {
 	if (generateFromJSON(currentGameTurn, currentGameSubTurn - 1)) {
 		--currentGameSubTurn;
 		gameTurnDataFound = true;
+	}
+	else {
+		gameTurnDataFound = generatePrevTurn();
 	}
 
 	return gameTurnDataFound;
@@ -376,7 +384,6 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn, const int gameSubTurn)
 	const char* jsonStr{ jsonData.constData() };
 	MemoryStream ms(jsonStr, jsonData.size());
 
-	Document document;
 	document.ParseStream(ms);
 
 	if (document.HasParseError()) {
@@ -459,6 +466,27 @@ void DiSVGGenerator::draw2DElements(const rapidjson::Value& elements) {
 			readAndDrawPath(element);
 		}
 	}
+}
+
+//*****************************************************************************************************************************
+//*****************************************************************************************************************************
+
+int DiSVGGenerator::getLastSubTurnIdx(const int turnIdx) const {
+	int lastSubTurnIdx{ INVALID_SUB_TURN_IDX };
+
+	assert(document.HasMember(JSON_TURNS) && document[JSON_TURNS].IsArray());
+	const Value& turns{ document[JSON_TURNS] };
+
+	if (turnIdx >= 0 && turnIdx < static_cast<int>(turns.Size())) {
+		const Value& turn{ turns[turnIdx] };
+		assert(turn.HasMember(JSON_TURN) && turn[JSON_TURN].IsInt() && turnIdx == turn[JSON_TURN].GetInt());
+
+		if (turn.HasMember(JSON_SUB_TURNS) && turn[JSON_SUB_TURNS].IsArray() && turn[JSON_SUB_TURNS].Size() > 0) {
+			lastSubTurnIdx = static_cast<int>(turn[JSON_SUB_TURNS].Size() - 1);
+		}
+	}
+
+	return lastSubTurnIdx;
 }
 
 //*****************************************************************************************************************************

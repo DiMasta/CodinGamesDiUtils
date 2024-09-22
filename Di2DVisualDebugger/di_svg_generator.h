@@ -68,6 +68,9 @@ private: ///< Function members
 	/// Draw the given 2D elements in the JSON array object
 	void draw2DElements(const rapidjson::Value& elements);
 
+	/// Return the index of the last sub turn for the given turn or INVALID_SUB_TURN_IDX if there are no sub turns
+	int getLastSubTurnIdx(const int turnIdx) const;
+
 	/// Functions for reading the properties of the 2D elements and drawing them on the SVG file
 	void drawTurn(const int turnIdx, const int subTurnIdx);
 	void readAndDrawText(QTextStream& in, const bool skipElement);
@@ -95,5 +98,7 @@ private: ///< Data members
 	std::unique_ptr<QPainter> svgPainter; ///< The painter, which is used to draw on the output SVG file
 
 	int currentGameTurn{ 0 }; ///< The game turn for, which visual debug information is generated
-	int currentGameSubTurn{ -1 }; ///< The game sub turn for, which visual debug information is generated, containing search data -1 means only the current turn is rendered
+	int currentGameSubTurn{ INVALID_SUB_TURN_IDX }; ///< The game sub turn for, which visual debug information is generated, containing search data -1 means only the current turn is rendered
+
+	rapidjson::Document document; ///< The actual rapidjson document acts like a buffer for the final file
 };

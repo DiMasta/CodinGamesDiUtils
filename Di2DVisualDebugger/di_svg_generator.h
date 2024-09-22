@@ -10,6 +10,7 @@
 static const QString TEXT_FONT{ "Arial" };
 static const int TEXT_FONT_SIZE{ 128 };
 static const int LINES_WIDTH{ 24 };
+static const int INVALID_SUB_TURN_IDX{ -100 };
 
 /// Tags for drawable elements
 static const QString ELEM_TURN		{ "TURN"};

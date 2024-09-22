@@ -147,7 +147,7 @@ bool DiSVGGenerator::generate(const int gameTurn) {
 			in.skipWhiteSpace();
 
 			if (gameTurn == turnIdx) {
-				drawTurn(turnIdx, -1);
+				drawTurn(turnIdx, INVALID_SUB_TURN_IDX);
 				skipElement = false;
 				gameTurnDataFound = true;
 			}
@@ -385,14 +385,27 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn, const int gameSubTurn)
 		return false;
 	}
 
-	prepareForDrawing(document);
-
+	assert(document.HasMember(JSON_TURNS) && document[JSON_TURNS].IsArray());
 	const Value& turns{ document[JSON_TURNS] };
-	assert(gameTurn < static_cast<int>(turns.Size()));
+	if (gameTurn < 0 || gameTurn >= static_cast<int>(turns.Size())) {
+		return false;
+	}
 
 	const Value& turn{ turns[gameTurn] };
 	assert(turn.HasMember(JSON_TURN) && turn[JSON_TURN].IsInt() && gameTurn == turn[JSON_TURN].GetInt());
 
+	bool drawSubTurn{ false };
+	if (INVALID_SUB_TURN_IDX != gameSubTurn) {
+		const bool subTurnsDataAvailable{ turn.HasMember(JSON_SUB_TURNS) && turn[JSON_SUB_TURNS].IsArray() };
+		const bool subTunrDataAvailable{ gameSubTurn >= 0 && gameSubTurn < static_cast<int>(turn[JSON_SUB_TURNS].Size()) };
+
+		drawSubTurn = subTurnsDataAvailable && subTunrDataAvailable;
+		if (!drawSubTurn) {
+			return false;
+		}
+	}
+
+	prepareForDrawing(document);
 	drawTurn(gameTurn, gameSubTurn);
 
 	assert(turn.HasMember(JSON_ENTITIES) && turn[JSON_ENTITIES].IsArray());
@@ -406,7 +419,7 @@ bool DiSVGGenerator::generateFromJSON(const int gameTurn, const int gameSubTurn)
 
 	draw2DElements(document[JSON_ELEMENTS]);
 
-	if (-1 != gameSubTurn) {
+	if (drawSubTurn) {
 		assert(turn.HasMember(JSON_SUB_TURNS) && turn[JSON_SUB_TURNS].IsArray() && gameSubTurn < static_cast<int>(turn[JSON_SUB_TURNS].Size()));
 		const Value& subTurn{ turn[JSON_SUB_TURNS][gameSubTurn] };
 
@@ -506,7 +519,7 @@ void DiSVGGenerator::prepareSVGFileForDrawing(const int imageWidth, const int im
 void DiSVGGenerator::drawTurn(const int turnIdx, const int subTurnIdx) {
 	QString turnStr{ QString("TURN: %1").arg(turnIdx) };
 
-	if (-1 != subTurnIdx) {
+	if (INVALID_SUB_TURN_IDX != subTurnIdx) {
 		turnStr = QString("%1:%2").arg(turnStr, QString::number(subTurnIdx));
 	}
 

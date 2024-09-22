@@ -118,7 +118,7 @@ MainWindow::MainWindow(
 	connect(m_view, &SvgView::zoomChanged, this, &MainWindow::updateZoomLabel);
 
 	//diSVGGenerator.generate(0);
-	diSVGGenerator.generateFromJSON(0, -1);
+	diSVGGenerator.generateFromJSON(0, INVALID_SUB_TURN_IDX);
 	loadFile(outputSVGFile);
 }
 

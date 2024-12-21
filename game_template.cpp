@@ -1,8 +1,9 @@
-//#define OUTPUT_GAME_DATA
 //#define TIME_MEASURERMENT
 //#define DEBUG_ONE_TURN
 
 #ifndef REDIRECT_INPUT
+
+#define OUTPUT_GAME_DATA
 
 #pragma GCC optimize("O3","unroll-loops","omit-frame-pointer","inline") //Optimization flags
 #pragma GCC option("arch=native","tune=native","no-zero-upper") //Enable AVX
@@ -41,7 +42,9 @@ using namespace std;
 static const string INPUT_FILE_NAME = "input.txt";
 static const string OUTPUT_FILE_NAME = "output.txt";
 static const string EMPTY_STRING = "";
-static const string SPACE = " ";
+
+static constexpr char SPACE = ' ';
+static constexpr char NEW_LINE = '\n';
 
 static constexpr int INVALID_IDX = -1;
 
